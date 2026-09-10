@@ -1,0 +1,137 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@theme {
+  --color-lab-cream: #D2C9BD;
+  --color-lab-creamDark: #BAAFA1;
+  --color-lab-slate: #2B303A;
+  --color-lab-slateDark: #1E222A;
+  --color-lab-phosphor: #00FF66;
+  --color-lab-amber: #FFB000;
+  --color-lab-radar: #00E5FF;
+
+  --font-mono: 'JetBrains Mono', 'Share Tech Mono', 'Courier New', monospace;
+
+  --shadow-bevel: inset 0 4px 12px 2px rgba(0, 0, 0, 0.9), inset 0 -1px 3px rgba(255, 255, 255, 0.1);
+  --shadow-button-raised: 0 6px 0 #15181E, 0 8px 16px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255,255,255,0.2);
+  --shadow-button-depressed: 0 2px 0 #15181E, 0 2px 4px rgba(0, 0, 0, 0.8), inset 0 4px 8px rgba(0,0,0,0.6);
+  --shadow-glow-green: 0 0 12px 3px rgba(0, 255, 102, 0.6);
+  --shadow-glow-red: 0 0 12px 3px rgba(239, 68, 68, 0.6);
+  --shadow-glow-amber: 0 0 12px 3px rgba(255, 176, 0, 0.6);
+}
+
+@layer utilities {
+  /* CRT Monitor Glass Scanlines */
+  .crt-scanlines {
+    position: relative;
+  }
+  .crt-scanlines::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* 1970s Matte Painted Chassis Noise Texture */
+  .chassis-grain {
+    background-color: #D2C9BD;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  /* Brushed Metal Sheet Panels */
+  .brushed-metal {
+    background: linear-gradient(to right, 
+      rgba(255,255,255,0.05) 0%, 
+      rgba(0,0,0,0.05) 25%, 
+      rgba(255,255,255,0.08) 50%, 
+      rgba(0,0,0,0.08) 75%, 
+      rgba(255,255,255,0.05) 100%
+    );
+  }
+
+  /* Organic Slow Floating Animations for Neural Blur Mesh */
+  @keyframes float-slow-1 {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(40px, -30px) scale(1.08); }
+  }
+  @keyframes float-slow-2 {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(-45px, 25px) scale(1.12); }
+  }
+  @keyframes float-slow-3 {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(30px, 40px) scale(0.96); }
+  }
+
+  .animate-float-1 {
+    animation: float-slow-1 20s ease-in-out infinite;
+  }
+  .animate-float-2 {
+    animation: float-slow-2 26s ease-in-out infinite;
+  }
+  .animate-float-3 {
+    animation: float-slow-3 22s ease-in-out infinite;
+  }
+}
+
+@layer base {
+  :root {
+    --bg-mesh: #07080a;
+    --card-glass: rgba(0, 0, 0, 0.4);
+    --steel-chassis: #13171f;
+  }
+
+  body {
+    background-color: #07080a;
+    color: #e2e8f0;
+    font-family: 'Chivo', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+}
+
+/* 1970s Laboratory Bench Faint Noise Overlay */
+.lab-noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.065'/%3E%3C/svg%3E");
+}
+
+/* Heavy inner-bevel steel insert chassis styling */
+.chassis-steel-insert {
+  background-color: #2B303A;
+  box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+.chassis-inner-recess {
+  box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Industrial slotted rack screw styling */
+.bolt-hardware {
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.6);
+}
+
+/* Brushed rack rail trim */
+.rack-rail-texture {
+  background: repeating-linear-gradient(
+    180deg,
+    #b8afa1 0px,
+    #c4bba9 2px,
+    #b4aba0 4px
+  );
+}
+
+/* Instrument CRT Grid lines */
+.crt-grid {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(56, 239, 125, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 239, 125, 0.12) 1px, transparent 1px);
+}
