@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { ChassisScrew, RotaryKnob, ToggleSwitch, PushButton } from '../Shared/HardwareControls';
 import { OscilloscopeScreen } from '../Shared/OscilloscopeScreen';
 import { ArrowRight, Terminal, Activity, Cpu } from 'lucide-react';
+import { useGlassParallax } from '../../hooks/useGlassParallax';
 
 /**
  * SmallModule
  * Compact blade designed for a multi-column rack grid with Neural Cyberpunk Console styling.
  * - Glass morphism: backdrop-blur-md, background black at 40% opacity, crisp border border-slate-800/60
  * - Razor-thin border accent border-white/5
- * - Asymmetric tech topology graphic bleed
+ * - Asymmetric tech topology graphic bleed with subtle parallax offset
+ * - Parallax internal glow following mouse coordinates with specular glass blade highlight
  * - Interactive HUD Trigger button that floods with brand color on hover and lights up the card's bottom border
  */
 export const SmallModule = ({
@@ -19,8 +21,18 @@ export const SmallModule = ({
   const [localPower, setLocalPower] = useState(true);
   const [frequency, setFrequency] = useState(1);
   const [amplitude, setAmplitude] = useState(1);
-  const [isCardHovered, setIsCardHovered] = useState(false);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
+
+  const {
+    cardRef,
+    isHovered: isCardHovered,
+    coords,
+    tilt,
+    normalized,
+    handleMouseMove,
+    handleMouseEnter,
+    handleMouseLeave,
+  } = useGlassParallax({ maxTilt: 2.5 });
 
   const isEnergized = mainsPower && localPower;
   const isHighlighted = isCardHovered || isButtonHovered;
@@ -28,26 +40,34 @@ export const SmallModule = ({
   return (
     <div
       id={`module-${app.id}`}
-      onMouseEnter={() => setIsCardHovered(true)}
-      onMouseLeave={() => setIsCardHovered(false)}
-      className={`relative rounded-xl p-[1px] select-none flex flex-col h-full transition-all duration-500 ease-out transform group ${
-        isCardHovered ? 'scale-[1.015] z-30' : 'scale-100 z-10'
+      ref={cardRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className={`relative rounded-xl p-[1px] select-none flex flex-col h-full transition-all duration-300 ease-out group ${
+        isHighlighted ? 'scale-[1.015] z-30' : 'scale-100 z-10'
       }`}
       style={{
+        perspective: '1200px',
+        transform: isHighlighted
+          ? `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(1.015, 1.015, 1.015)`
+          : 'perspective(1200px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
         background: isHighlighted
-          ? `linear-gradient(135deg, ${app.accentColor} 0%, rgba(30, 41, 59, 0.45) 40%, rgba(30, 41, 59, 0.45) 60%, ${app.accentColor} 100%)`
+          ? `radial-gradient(500px circle at ${coords.x}px ${coords.y}px, ${app.accentColor} 0%, rgba(30, 41, 59, 0.45) 42%, rgba(255,255,255,0.02) 100%)`
           : 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(30, 41, 59, 0.5) 50%, rgba(255,255,255,0.02) 100%)',
         boxShadow: isHighlighted
-          ? `0 20px 48px -10px ${app.accentColor}35, 0 0 28px ${app.accentColor}25`
+          ? `0 24px 52px -10px ${app.accentColor}35, 0 0 28px ${app.accentColor}25`
           : '0 8px 32px rgba(0,0,0,0.6)',
       }}
     >
-      {/* Dynamic Flow Overlay: Faint circuit architecture graphic bleeding outside container boundary */}
+      {/* Dynamic Flow Overlay: Faint circuit architecture graphic bleeding outside container boundary with subtle parallax */}
       <div
-        className="absolute -bottom-4 -left-4 w-36 h-28 pointer-events-none transition-all duration-500 ease-out overflow-visible z-0"
+        className="absolute -bottom-4 -left-4 w-36 h-28 pointer-events-none transition-transform duration-200 ease-out overflow-visible z-0"
         style={{
           opacity: isHighlighted ? 0.38 : 0.12,
-          transform: isHighlighted ? 'scale(1.15) translate(-3px, 3px)' : 'scale(1) translate(0, 0)',
+          transform: isHighlighted
+            ? `scale(1.15) translate(${-3 - normalized.x * 7}px, ${3 - normalized.y * 6}px)`
+            : 'scale(1) translate(0, 0)',
           color: app.accentColor,
         }}
       >
@@ -65,13 +85,31 @@ export const SmallModule = ({
 
       {/* Glassmorphic Chassis Insert: backdrop-blur-md, bg-black/40, border border-slate-800/60 */}
       <div
-        className="relative rounded-[11px] p-3.5 sm:p-5 text-[#D8E0EA] backdrop-blur-md bg-black/40 border border-slate-800/60 flex flex-col justify-between flex-1 overflow-hidden transition-all duration-500 ease-out"
+        className="relative rounded-[11px] p-3.5 sm:p-5 text-[#D8E0EA] backdrop-blur-md bg-black/40 border border-slate-800/60 flex flex-col justify-between flex-1 overflow-hidden transition-all duration-300 ease-out"
         style={{
           boxShadow: isHighlighted
             ? `inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -2px 10px ${app.accentColor}25`
             : 'inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 20px rgba(0,0,0,0.5)',
         }}
       >
+        {/* Faint Internal Glow: Dynamic Parallax Luminescence following mouse coordinates */}
+        <div
+          className="absolute inset-0 pointer-events-none transition-opacity duration-300 ease-out z-0 rounded-[11px] overflow-hidden"
+          style={{
+            opacity: isHighlighted ? 0.2 : 0,
+            background: `radial-gradient(380px circle at ${coords.x}px ${coords.y}px, ${app.accentColor} 0%, rgba(255, 255, 255, 0.04) 32%, transparent 68%)`,
+          }}
+        />
+
+        {/* Specular Glass Blade Refraction Sheen: subtle specular highlight moving with cursor */}
+        <div
+          className="absolute inset-0 pointer-events-none transition-opacity duration-300 ease-out z-0 rounded-[11px] overflow-hidden mix-blend-overlay"
+          style={{
+            opacity: isHighlighted ? 0.28 : 0,
+            background: `radial-gradient(220px circle at ${coords.x}px ${coords.y}px, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.05) 45%, transparent 75%)`,
+          }}
+        />
+
         {/* Luminous Bottom Border Illumination Strip */}
         <div
           className="absolute bottom-0 inset-x-0 h-[2px] pointer-events-none transition-all duration-500 ease-out z-20"
