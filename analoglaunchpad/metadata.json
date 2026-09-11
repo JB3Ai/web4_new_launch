@@ -1,0 +1,6 @@
+{
+  "name": "AnalogLaunchpad",
+  "description": "Neural Cyberpunk Console portfolio launchpad featuring triple-source radial mesh, glassmorphic blades, vector oscilloscopes, and interactive HUD triggers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
