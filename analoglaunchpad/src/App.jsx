@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ConsoleHeader } from './components/Chassis/ConsoleHeader';
 import { MasterOscilloscopeController } from './components/Chassis/MasterOscilloscopeController';
-import { LargeModule } from './components/Modules/LargeModule';
-import { SmallModule } from './components/Modules/SmallModule';
+import { LargeModule } from './components/modules/LargeModule';
+import { SmallModule } from './components/modules/SmallModule';
 import { ChassisScrew } from './components/Shared/HardwareControls';
 import appsData from './data/appsData';
 import { ExternalLink, Mail, CheckCircle2, User, Sparkles } from 'lucide-react';
@@ -343,7 +343,7 @@ export default function App() {
             <div
               className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-[0.14] mix-blend-luminosity filter contrast-125 transition-opacity duration-700 hover:opacity-20"
               style={{
-                backgroundImage: 'url(/founder_portrait.jpg)',
+                backgroundImage: 'url(/assets/BAY08jbprofile.jpg)',
               }}
             />
             {/* Linear Gradient Fade Mask over Founder Image */}
