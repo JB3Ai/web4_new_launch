@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { OscilloscopeScreen } from '../Shared/OscilloscopeScreen';
 import { ExternalLink, Terminal } from 'lucide-react';
 
 /** Full-width heavy chassis module for priority launchpad bays. */
 export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) => {
   const slot = app.slot || slotNumber;
+  const previewSource = app.imagePlaceholder && app.imagePlaceholder !== 'RENDER_PENDING'
+    ? `/assets/previews/${app.imagePlaceholder}`
+    : null;
+  const [failedPreviewSource, setFailedPreviewSource] = useState(null);
+  const previewUnavailable = !previewSource || failedPreviewSource === previewSource;
 
   return (
     <article
@@ -40,18 +45,39 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
           </div>
         </div>
 
-        <div className="border border-slate-800/80 bg-slate-950/40 flex items-center justify-center h-24 mb-4 border-dashed relative rounded-none overflow-hidden group/img">
-          <img
-            src={`/assets/previews/${app.imagePlaceholder}`}
-            alt={app.title}
-            className="w-full h-full object-cover opacity-40 group-hover/img:opacity-75 transition-all duration-300 filter grayscale contrast-125 brightness-90 mix-blend-screen"
-            onError={(e) => {
-              e.target.style.display = 'none';
-            }}
-          />
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-slate-950/20">
-            <span className="text-[10px] text-slate-500 font-bold tracking-widest font-mono">// MODULE BLOCK: {app.slot} //</span>
-          </div>
+        <div className={`border border-slate-800/80 flex items-center justify-center h-24 mb-4 border-dashed relative rounded-none overflow-hidden group/img ${previewUnavailable ? 'bg-[#050709]' : 'bg-slate-950/40'}`}>
+          {previewUnavailable ? (
+            <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-[#050709]" role="status">
+              <div
+                className="absolute inset-0 opacity-40"
+                style={{
+                  backgroundImage: 'linear-gradient(rgba(245,158,11,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(245,158,11,0.1) 1px, transparent 1px)',
+                  backgroundSize: '12px 12px',
+                }}
+              />
+              <div className="absolute left-1/2 top-2 bottom-2 w-px -translate-x-1/2 bg-amber-500/25" />
+              <div className="absolute top-1/2 left-2 right-2 h-px -translate-y-1/2 bg-amber-500/25" />
+              <div className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 border border-amber-500/30" />
+              <span
+                className="relative border border-amber-500/30 bg-[#050709]/90 px-3 py-2 text-center font-mono text-[10px] font-black tracking-[0.16em] text-amber-400 animate-pulse"
+                style={{ textShadow: '0 0 8px rgba(245,158,11,0.45)' }}
+              >
+                OFFLINE // TELEMETRY LINK RENDERING...
+              </span>
+            </div>
+          ) : (
+            <>
+              <img
+                src={previewSource}
+                alt={app.title}
+                className="w-full h-full object-cover opacity-40 group-hover/img:opacity-75 transition-all duration-300 filter grayscale contrast-125 brightness-90 mix-blend-screen"
+                onError={() => setFailedPreviewSource(previewSource)}
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-slate-950/20">
+                <span className="text-[10px] text-slate-500 font-bold tracking-widest font-mono">// MODULE BLOCK: {app.slot} //</span>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="flex items-center gap-4 text-[10px] text-slate-500 border-t border-slate-900/80 pt-3 font-mono">
