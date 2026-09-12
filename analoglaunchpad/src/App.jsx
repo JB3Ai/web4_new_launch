@@ -80,7 +80,6 @@ export default function App() {
     { id: 'REPORTS', label: 'DD REPORTS' },
     { id: 'APPS', label: 'CORE APPS' },
   ];
-  const stacksList = sectors.map(({ id }) => id);
   const filteredApps = appsData.filter(
     (app) => selectedStack === 'ALL' || app.sector === selectedStack
   );
@@ -151,14 +150,9 @@ export default function App() {
       <div className="relative z-10 flex flex-col flex-1">
         {/* Master Console Controller ("JB³-DEMO-STATION_B01") */}
         <ConsoleHeader
-          mainsPower={mainsPower}
-          onToggleMains={() => setMainsPower(!mainsPower)}
-          benchVoltage={benchVoltage}
-          selectedStack={selectedStack}
-          onSelectStack={setSelectedStack}
-          stacks={stacksList}
-          totalApps={appsData.length}
-          visibleCount={matchingCount}
+          sectors={sectors}
+          activeFilter={selectedStack}
+          onFilterChange={setSelectedStack}
         />
 
         {/* Rack Mount Assembly Enclosure Area */}
