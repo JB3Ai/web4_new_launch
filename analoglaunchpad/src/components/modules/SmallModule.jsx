@@ -28,9 +28,17 @@ export const SmallModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
       <OscilloscopeScreen waveType={app.waveType} accentColor={app.accentColor} power={mainsPower} height={130} />
 
       <div className="border border-dashed border-slate-800/80 bg-slate-950/30 p-2 flex items-center justify-center h-16 relative rounded-none overflow-hidden group/diagram">
-        <span className="text-[9px] text-slate-500 font-black tracking-widest z-10 transition-transform duration-300 group-hover/diagram:scale-95">
-          [ BLOCKS DIAGRAM // {app.imagePlaceholder} ]
-        </span>
+        {app.imagePlaceholder ? (
+          <img
+            src={app.imagePlaceholder}
+            alt={`${app.title} architecture preview`}
+            className="relative z-10 h-full w-full object-cover rounded-none transition-transform duration-300 group-hover/diagram:scale-95"
+          />
+        ) : (
+          <span className="text-[9px] text-slate-500 font-black tracking-widest z-10">
+            [ BLOCKS DIAGRAM // RENDER PENDING ]
+          </span>
+        )}
         <div
           className="absolute inset-0 opacity-[0.02] pointer-events-none"
           style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 0)', backgroundSize: '6px 6px' }}

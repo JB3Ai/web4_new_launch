@@ -45,10 +45,18 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
             className="absolute inset-0 opacity-[0.02] pointer-events-none"
             style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 0)', backgroundSize: '8px 8px' }}
           />
-          <div className="text-center z-10 transition-transform duration-300 group-hover/preview:scale-95">
-            <span className="text-[10px] text-slate-500 font-bold tracking-widest block mb-0.5">[ DIAGNOSTIC PREVIEW NODE ]</span>
-            <span className="text-[9px] text-slate-600 font-mono block">SRC // {app.imagePlaceholder}</span>
-          </div>
+          {app.imagePlaceholder ? (
+            <img
+              src={app.imagePlaceholder}
+              alt={`${app.title} preview`}
+              className="relative z-10 h-full w-full object-cover rounded-none transition-transform duration-300 group-hover/preview:scale-95"
+            />
+          ) : (
+            <div className="text-center z-10">
+              <span className="text-[10px] text-slate-500 font-bold tracking-widest block mb-0.5">[ DIAGNOSTIC PREVIEW NODE ]</span>
+              <span className="text-[9px] text-slate-600 font-mono block">RENDER PENDING</span>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-4 text-[10px] text-slate-500 border-t border-slate-900/80 pt-3 font-mono">
