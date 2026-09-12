@@ -23,6 +23,9 @@ export const OscilloscopeScreen = ({
 }) => {
   const canvasRef = useRef(null);
   const screenRef = useRef(null);
+  // Animation values change every frame, so keep them outside React's render cycle.
+  const speedMultiplierRef = useRef(1);
+  const hoverTargetRef = useRef(1);
   const [dimensions, setDimensions] = useState({ width: 300, height: height - 30 });
   const [isHovered, setIsHovered] = useState(false);
 
@@ -59,7 +62,108 @@ export const OscilloscopeScreen = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const { width: w, height: h } = canvas;
+    if (w === 0 || h === 0) return;
+
+    const cx = w / 2;
+    const cy = h / 2;
+    const clampedAmplitude = Math.min(Math.max(amplitude, 0.2), 1.5);
+    const amp = (h / 2.7) * clampedAmplitude;
+    const freq = Math.min(Math.max(frequency, 0.2), 4);
+    const sineStep = Math.max(2, Math.ceil(w / 180));
+    const lissajousPoints = 120;
+    const twoPi = Math.PI * 2;
+    const radarMaxRadius = Math.min(cx, cy) * 0.88;
+    const radarBlips = [
+      [0.52, 1.25],
+      [0.78, 3.75],
+      [0.36, 5.35],
+      [0.68, 2.15],
+    ];
+
+    // The tube background and reticle do not change frame-to-frame. Rasterize
+    // them once, then copy the cached layer during each animation frame.
+    const staticLayer = document.createElement('canvas');
+    staticLayer.width = w;
+    staticLayer.height = h;
+    const staticCtx = staticLayer.getContext('2d');
+    if (!staticCtx) return;
+
+    staticCtx.fillStyle = power ? '#090D0B' : '#121413';
+    staticCtx.fillRect(0, 0, w, h);
+
+    if (power) {
+      const radialGlow = staticCtx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(w, h) * 0.75);
+      radialGlow.addColorStop(0, `${accentColor}1C`);
+      radialGlow.addColorStop(1, 'transparent');
+      staticCtx.fillStyle = radialGlow;
+      staticCtx.fillRect(0, 0, w, h);
+
+      if (showGraticule) {
+        staticCtx.lineWidth = 1;
+        staticCtx.strokeStyle = 'rgba(255, 255, 255, 0.065)';
+        staticCtx.beginPath();
+        for (let i = 0; i <= 8; i++) {
+          const x = Math.round((w / 8) * i) + 0.5;
+          staticCtx.moveTo(x, 0);
+          staticCtx.lineTo(x, h);
+        }
+        for (let i = 0; i <= 6; i++) {
+          const y = Math.round((h / 6) * i) + 0.5;
+          staticCtx.moveTo(0, y);
+          staticCtx.lineTo(w, y);
+        }
+        staticCtx.stroke();
+
+        staticCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        staticCtx.beginPath();
+        for (let i = 0; i <= 32; i++) {
+          const x = (w / 32) * i;
+          staticCtx.moveTo(x, Math.round(cy) - 2.5);
+          staticCtx.lineTo(x, Math.round(cy) + 2.5);
+        }
+        for (let i = 0; i <= 24; i++) {
+          const y = (h / 24) * i;
+          staticCtx.moveTo(Math.round(cx) - 2.5, y);
+          staticCtx.lineTo(Math.round(cx) + 2.5, y);
+        }
+        staticCtx.stroke();
+      }
+
+      if (waveType === 'radar' || waveType === 'vctradar') {
+        staticCtx.lineWidth = 1;
+        staticCtx.strokeStyle = `${accentColor}40`;
+        staticCtx.beginPath();
+        for (const radiusFraction of [0.33, 0.66, 1]) {
+          staticCtx.moveTo(cx + radarMaxRadius * radiusFraction, cy);
+          staticCtx.arc(cx, cy, radarMaxRadius * radiusFraction, 0, twoPi);
+        }
+        staticCtx.stroke();
+      }
+    } else {
+      staticCtx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      staticCtx.font = '10px "Share Tech Mono", monospace';
+      staticCtx.textAlign = 'center';
+      staticCtx.textBaseline = 'middle';
+      staticCtx.fillText('NO BEAM / STANDBY', cx, cy);
+    }
+
+    if (!power) {
+      ctx.drawImage(staticLayer, 0, 0);
+      return;
+    }
+
+    const radarTrailGradient =
+      waveType === 'radar' || waveType === 'vctradar'
+        ? ctx.createRadialGradient(cx, cy, 5, cx, cy, radarMaxRadius)
+        : null;
+    if (radarTrailGradient) {
+      radarTrailGradient.addColorStop(0, `${accentColor}35`);
+      radarTrailGradient.addColorStop(1, `${accentColor}05`);
+    }
+
     let animId;
+    let lastFrameTime = 0;
     let phase = 0;
     let sweepAngle = 0;
 
@@ -67,117 +171,47 @@ export const OscilloscopeScreen = ({
     const matrixCols = 18;
     const drops = Array.from({ length: matrixCols }, () => Math.random() * 30);
 
-    const render = () => {
-      const { width: w, height: h } = canvas;
-      if (w === 0 || h === 0) return;
+    const render = (timestamp) => {
+      const elapsedSeconds = lastFrameTime
+        ? Math.min((timestamp - lastFrameTime) / 1000, 0.05)
+        : 1 / 60;
+      lastFrameTime = timestamp;
 
-      // Speed multiplier scales up smoothly when hovered
-      const speedMultiplier = isHovered ? 1.75 : 1.0;
+      // Frame-rate independent linear interpolation keeps hover acceleration smooth.
+      const lerpAmount = Math.min(elapsedSeconds * 9, 1);
+      speedMultiplierRef.current +=
+        (hoverTargetRef.current - speedMultiplierRef.current) * lerpAmount;
+      const speedMultiplier = speedMultiplierRef.current;
+      const frameScale = elapsedSeconds * 60;
 
-      // Deep cathode tube background with ambient phosphor bloom
-      ctx.fillStyle = power ? '#090D0B' : '#121413';
-      ctx.fillRect(0, 0, w, h);
-
-      if (!power) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.font = '10px "Share Tech Mono", monospace';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('NO BEAM / STANDBY', w / 2, h / 2);
-        return;
-      }
-
-      // Faint ambient CRT radial phosphor glow behind the glass
-      const radialGlow = ctx.createRadialGradient(
-        w / 2,
-        h / 2,
-        10,
-        w / 2,
-        h / 2,
-        Math.max(w, h) * 0.75
-      );
-      radialGlow.addColorStop(0, `${accentColor}1C`);
-      radialGlow.addColorStop(1, 'transparent');
-      ctx.fillStyle = radialGlow;
-      ctx.fillRect(0, 0, w, h);
-
-      // 1. Draw Etched Glass Reticle / Graticule Grid
-      if (showGraticule) {
-        ctx.save();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.065)';
-
-        const numCols = 8;
-        for (let i = 0; i <= numCols; i++) {
-          const x = Math.round((w / numCols) * i);
-          ctx.beginPath();
-          ctx.moveTo(x + 0.5, 0);
-          ctx.lineTo(x + 0.5, h);
-          ctx.stroke();
-        }
-
-        const numRows = 6;
-        for (let j = 0; j <= numRows; j++) {
-          const y = Math.round((h / numRows) * j);
-          ctx.beginPath();
-          ctx.moveTo(0, y + 0.5);
-          ctx.lineTo(w, y + 0.5);
-          ctx.stroke();
-        }
-
-        const cx = Math.round(w / 2);
-        const cy = Math.round(h / 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-
-        const subTickStepX = w / 32;
-        for (let x = 0; x <= w; x += subTickStepX) {
-          ctx.beginPath();
-          ctx.moveTo(x, cy - 2.5);
-          ctx.lineTo(x, cy + 2.5);
-          ctx.stroke();
-        }
-
-        const subTickStepY = h / 24;
-        for (let y = 0; y <= h; y += subTickStepY) {
-          ctx.beginPath();
-          ctx.moveTo(cx - 2.5, y);
-          ctx.lineTo(cx + 2.5, y);
-          ctx.stroke();
-        }
-        ctx.restore();
-      }
+      ctx.drawImage(staticLayer, 0, 0);
 
       ctx.save();
-      ctx.shadowBlur = isHovered ? 12 : 8;
+      ctx.shadowBlur = speedMultiplier > 1.05 ? 12 : 8;
       ctx.shadowColor = accentColor;
       ctx.strokeStyle = accentColor;
       ctx.fillStyle = accentColor;
-      ctx.lineWidth = isHovered ? 2.2 : 2.0;
+      ctx.lineWidth = speedMultiplier > 1.05 ? 2.2 : 2.0;
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
 
-      const cx = w / 2;
-      const cy = h / 2;
-      const amp = (h / 2.7) * Math.min(Math.max(amplitude, 0.2), 1.5);
-      const freq = Math.min(Math.max(frequency, 0.2), 4);
       const jitter = (Math.random() - 0.5) * (noise * 6);
 
       // Render Waveform Vector
       if (waveType === 'sine') {
         ctx.beginPath();
-        for (let x = 0; x <= w; x += 2) {
+        for (let x = 0; x <= w; x += sineStep) {
           const t = (x / w) * Math.PI * 4 * freq + phase;
           const y = cy - Math.sin(t) * amp + jitter;
           if (x === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
-        phase += 0.045 * speedMultiplier;
+        phase = (phase + 0.045 * speedMultiplier * frameScale) % twoPi;
       } else if (waveType === 'lissajous') {
         ctx.beginPath();
-        const pts = 200;
-        for (let i = 0; i <= pts; i++) {
-          const t = (i / pts) * Math.PI * 2;
+        for (let i = 0; i <= lissajousPoints; i++) {
+          const t = (i / lissajousPoints) * twoPi;
           const x = cx + Math.sin(t * 3 + phase) * (w * 0.36) + jitter;
           const y = cy + Math.sin(t * 2) * amp + jitter;
           if (i === 0) ctx.moveTo(x, y);
@@ -185,11 +219,11 @@ export const OscilloscopeScreen = ({
         }
         ctx.closePath();
         ctx.stroke();
-        phase += 0.035 * speedMultiplier;
+        phase = (phase + 0.035 * speedMultiplier * frameScale) % twoPi;
       } else if (waveType === 'sawtooth') {
         ctx.beginPath();
         const period = Math.max(w / (3 * freq), 20);
-        for (let x = 0; x <= w; x += 2) {
+        for (let x = 0; x <= w; x += sineStep) {
           const mod = (x + phase * 45) % period;
           const ramp = 1 - (2 * mod) / period;
           const y = cy - ramp * amp + jitter;
@@ -197,48 +231,30 @@ export const OscilloscopeScreen = ({
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
-        phase += 0.04 * speedMultiplier;
+        phase = (phase + 0.04 * speedMultiplier * frameScale) % twoPi;
       } else if (waveType === 'radar' || waveType === 'vctradar') {
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = `${accentColor}40`;
-        const maxR = Math.min(cx, cy) * 0.88;
-
-        for (let rFrac of [0.33, 0.66, 1.0]) {
-          ctx.beginPath();
-          ctx.arc(cx, cy, maxR * rFrac, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-
         const trailArc = 0.55;
-        const trailGrad = ctx.createRadialGradient(cx, cy, 5, cx, cy, maxR);
-        trailGrad.addColorStop(0, `${accentColor}35`);
-        trailGrad.addColorStop(1, `${accentColor}05`);
-        ctx.fillStyle = trailGrad;
+        ctx.fillStyle = radarTrailGradient;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
-        ctx.arc(cx, cy, maxR, sweepAngle - trailArc, sweepAngle, false);
+        ctx.arc(cx, cy, radarMaxRadius, sweepAngle - trailArc, sweepAngle, false);
         ctx.closePath();
         ctx.fill();
 
         ctx.lineWidth = 2.4;
         ctx.strokeStyle = accentColor;
-        const armX = cx + Math.cos(sweepAngle) * maxR;
-        const armY = cy + Math.sin(sweepAngle) * maxR;
+        const armX = cx + Math.cos(sweepAngle) * radarMaxRadius;
+        const armY = cy + Math.sin(sweepAngle) * radarMaxRadius;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(armX, armY);
         ctx.stroke();
 
-        const blips = [
-          { r: maxR * 0.52, a: 1.25 },
-          { r: maxR * 0.78, a: 3.75 },
-          { r: maxR * 0.36, a: 5.35 },
-          { r: maxR * 0.68, a: 2.15 },
-        ];
-        blips.forEach((b) => {
-          const bx = cx + Math.cos(b.a) * b.r;
-          const by = cy + Math.sin(b.a) * b.r;
-          const diff = (sweepAngle - b.a + Math.PI * 4) % (Math.PI * 2);
+        for (let i = 0; i < radarBlips.length; i++) {
+          const [radiusFraction, angle] = radarBlips[i];
+          const bx = cx + Math.cos(angle) * radarMaxRadius * radiusFraction;
+          const by = cy + Math.sin(angle) * radarMaxRadius * radiusFraction;
+          const diff = (sweepAngle - angle + Math.PI * 4) % twoPi;
           if (diff < 1.3) {
             const alpha = 1 - diff / 1.3;
             ctx.fillStyle = accentColor;
@@ -248,9 +264,9 @@ export const OscilloscopeScreen = ({
             ctx.fill();
             ctx.globalAlpha = 1.0;
           }
-        });
+        }
 
-        sweepAngle += 0.035 * speedMultiplier;
+        sweepAngle = (sweepAngle + 0.035 * speedMultiplier * frameScale) % twoPi;
       } else if (waveType === 'spectra') {
         // MOD-03 SPECTRA: Spectrum Analyzer Bar Graph (Green / Amber / Red phosphor segments)
         const bars = 18;
@@ -266,7 +282,7 @@ export const OscilloscopeScreen = ({
           ctx.fillStyle = accentColor;
           ctx.fillRect(bx + 1, by, barWidth - 2, barH);
         }
-        phase += 0.04 * speedMultiplier;
+        phase = (phase + 0.04 * speedMultiplier * frameScale) % twoPi;
       } else if (waveType === 'vuneedle') {
         // MOD-04 VU-NEEDLE: Analog Needle Meter with Curved Dial Arc
         const meterR = Math.min(w, h) * 0.75;
@@ -305,7 +321,7 @@ export const OscilloscopeScreen = ({
         ctx.arc(pivotX, pivotY, 4, 0, Math.PI * 2);
         ctx.fill();
 
-        phase += 0.03 * speedMultiplier;
+        phase = (phase + 0.03 * speedMultiplier * frameScale) % twoPi;
       } else if (waveType === 'cellmatrix') {
         // MOD-05 CELL MATRIX: 8x6 Grid of Pulsating Phosphor Dots
         const cols = 8;
@@ -326,7 +342,7 @@ export const OscilloscopeScreen = ({
           }
         }
         ctx.globalAlpha = 1.0;
-        phase += 0.035 * speedMultiplier;
+        phase = (phase + 0.035 * speedMultiplier * frameScale) % twoPi;
       } else if (waveType === 'matrix') {
         ctx.font = '9px monospace';
         ctx.fillStyle = accentColor;
@@ -361,7 +377,7 @@ export const OscilloscopeScreen = ({
             ctx.fillRect(bx + 1.5, by + s * segH, barWidth - 3, segH - 1.5);
           }
         }
-        phase += 0.04 * speedMultiplier;
+        phase = (phase + 0.04 * speedMultiplier * frameScale) % twoPi;
       }
 
       ctx.restore();
@@ -370,12 +386,18 @@ export const OscilloscopeScreen = ({
 
     render();
     return () => cancelAnimationFrame(animId);
-  }, [power, waveType, accentColor, frequency, amplitude, noise, dimensions, showGraticule, isHovered]);
+  }, [power, waveType, accentColor, frequency, amplitude, noise, dimensions, showGraticule]);
 
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => {
+        hoverTargetRef.current = 3.2;
+        setIsHovered(true);
+      }}
+      onMouseLeave={() => {
+        hoverTargetRef.current = 1;
+        setIsHovered(false);
+      }}
       className={`relative w-full rounded-md p-2 bg-[#0E1210] border-2 border-[#1B221E] shadow-[inset_0_4px_16px_rgba(0,0,0,0.95),0_1px_1px_rgba(255,255,255,0.06)] flex flex-col justify-between overflow-hidden cursor-crosshair group shrink-0 ${className}`}
       style={{ height: `${height}px` }}
       title={`CRT Vector Display • ${waveType.toUpperCase()} Mode • Hover to accelerate beam`}

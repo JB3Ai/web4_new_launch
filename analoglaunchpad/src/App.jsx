@@ -71,12 +71,31 @@ export default function App() {
     setConsolePreset('Custom (*)');
   };
 
-  const stacksList = ['ALL', 'Render', 'Node', 'Vercel', 'Static'];
-
-  const matchingCount = appsData.filter((app) => {
-    if (selectedStack === 'ALL') return true;
-    return app.stack.toLowerCase() === selectedStack.toLowerCase();
-  }).length;
+  // Unified system channel sectors keep the grid focused without coupling UI
+  // layout to a deployment provider.
+  const sectors = [
+    { id: 'ALL', label: 'ALL CHANNELS' },
+    { id: 'WEB', label: 'WEB ENGINE' },
+    { id: 'FAMILY', label: 'FAMILY NETWORK' },
+    { id: 'REPORTS', label: 'DD REPORTS' },
+    { id: 'APPS', label: 'CORE APPS' },
+  ];
+  const sectorByAppId = {
+    isikolo: 'WEB',
+    skytime: 'WEB',
+    'business-redesign': 'WEB',
+    neurofam: 'FAMILY',
+    'isidore-diligence': 'REPORTS',
+    'os3-agentbuilder': 'APPS',
+    'jb3-command-centre': 'APPS',
+    'founder-portfolio': 'APPS',
+    'os3-demo-area': 'APPS',
+  };
+  const stacksList = sectors.map(({ id }) => id);
+  const filteredApps = appsData.filter(
+    (app) => selectedStack === 'ALL' || sectorByAppId[app.id] === selectedStack
+  );
+  const matchingCount = filteredApps.length;
 
   const app1 = appsData[0]; // BAY-01: IsiKoloAi Launch
   const app2 = appsData[1]; // BAY-02: SkyTime
@@ -90,7 +109,7 @@ export default function App() {
 
   const checkMatch = (app) => {
     if (selectedStack === 'ALL') return true;
-    return app.stack.toLowerCase() === selectedStack.toLowerCase();
+    return sectorByAppId[app.id] === selectedStack;
   };
 
   const handleSubscribe = (e) => {
@@ -174,6 +193,43 @@ export default function App() {
             </div>
           </div>
 
+          {/* 19-inch asymmetric instrument bay matrix */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {filteredApps.map((app) => {
+              const isLarge = ['isikolo', 'os3-agentbuilder', 'jb3-command-centre'].includes(app.id);
+              const slotNumber = `BAY-${String(appsData.indexOf(app) + 1).padStart(2, '0')}`;
+
+              return (
+                <div
+                  key={app.id}
+                  className={`h-full transition-all duration-300 ${isLarge ? 'md:col-span-2' : 'md:col-span-1'}`}
+                >
+                  {isLarge ? (
+                    <LargeModule
+                      app={app}
+                      slotNumber={slotNumber}
+                      mainsPower={mainsPower}
+                      masterGain={masterGain}
+                      oscillatorFreq={oscillatorFreq}
+                      waveformNoise={waveformNoise}
+                    />
+                  ) : (
+                    <SmallModule
+                      app={app}
+                      slotNumber={slotNumber}
+                      mainsPower={mainsPower}
+                      masterGain={masterGain}
+                      oscillatorFreq={oscillatorFreq}
+                      waveformNoise={waveformNoise}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {false && (
+            <>
           {/* ================= SECTION 1: BAY-01 (IsiKoloAi Launch) ================= */}
           <div className="mb-6">
             {(() => {
@@ -323,6 +379,8 @@ export default function App() {
               );
             })}
           </div>
+            </>
+          )}
 
           {/* ================= MASTER OSCILLOSCOPE & TELEMETRY CONTROLLER (NEW SPEC CONTROLLER) ================= */}
           <MasterOscilloscopeController
