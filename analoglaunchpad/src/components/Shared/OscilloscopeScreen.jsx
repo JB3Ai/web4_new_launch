@@ -398,14 +398,14 @@ export const OscilloscopeScreen = ({
         hoverTargetRef.current = 1;
         setIsHovered(false);
       }}
-      className={`relative w-full rounded-md p-2 bg-[#0E1210] border-2 border-[#1B221E] shadow-[inset_0_4px_16px_rgba(0,0,0,0.95),0_1px_1px_rgba(255,255,255,0.06)] flex flex-col justify-between overflow-hidden cursor-crosshair group shrink-0 ${className}`}
+      className={`relative w-full rounded-none p-2 bg-[#0E1210] border-2 border-[#1B221E] shadow-[inset_0_4px_16px_rgba(0,0,0,0.95),0_1px_1px_rgba(255,255,255,0.06)] flex flex-col justify-between overflow-hidden cursor-crosshair group shrink-0 ${className}`}
       style={{ height: `${height}px` }}
       title={`CRT Vector Display • ${waveType.toUpperCase()} Mode • Hover to accelerate beam`}
     >
       {/* Heavy Recessed Inner Shadow & Convex Bezel Frame */}
       <div
         ref={screenRef}
-        className="relative w-full rounded overflow-hidden flex-1 border border-[#1F2722] shadow-bevel crt-scanlines"
+        className="relative w-full rounded-none overflow-hidden flex-1 border border-[#1F2722] shadow-bevel crt-scanlines"
       >
         <canvas
           ref={canvasRef}
@@ -428,7 +428,7 @@ export const OscilloscopeScreen = ({
 
         {/* Corner Vignette Shadow (Tubular Edge Falloff) */}
         <div
-          className="absolute inset-0 pointer-events-none rounded"
+          className="absolute inset-0 pointer-events-none rounded-none"
           style={{
             boxShadow: 'inset 0 0 18px rgba(0,0,0,0.9)',
           }}

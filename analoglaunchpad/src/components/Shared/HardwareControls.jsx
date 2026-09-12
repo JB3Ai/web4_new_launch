@@ -382,7 +382,7 @@ export const PushButton = ({
     onClick: (e) => {
       if (onClick) onClick(e);
     },
-    className: `group relative inline-flex items-center justify-center font-mono text-[9.5px] uppercase rounded-xs select-none transition-all duration-300 cursor-pointer overflow-hidden border ${
+    className: `group relative inline-flex items-center justify-center font-mono text-[9.5px] uppercase rounded-none select-none transition-all duration-300 cursor-pointer overflow-hidden border ${
       isLit
         ? 'border-white text-[#07080A]'
         : 'border-slate-700/80 bg-black/40 text-slate-200'

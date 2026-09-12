@@ -38,7 +38,7 @@ export const SmallModule = ({
       id={`module-${app.id}`}
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
-      className={`relative rounded-xl p-[1px] select-none flex flex-col h-full transition-all duration-500 ease-out transform group ${
+      className={`relative rounded-none p-[1px] select-none flex flex-col h-full transition-all duration-500 ease-out transform group ${
         isCardHovered ? 'scale-[1.015] z-30' : 'scale-100 z-10'
       }`}
       style={{
@@ -65,7 +65,7 @@ export const SmallModule = ({
           <circle cx="68" cy="25" r="2.5" fill="none" strokeWidth="1.2" />
           <circle cx="105" cy="25" r="3.5" fill="currentColor" />
           <path d="M45 60 L45 15" fill="none" strokeWidth="0.8" strokeDasharray="2 2" />
-          <rect x="39" y="8" width="12" height="12" rx="2" fill="none" strokeWidth="0.8" />
+          <rect x="39" y="8" width="12" height="12" rx="0" fill="none" strokeWidth="0.8" />
           <path d="M68 25 L85 55" fill="none" strokeWidth="0.75" />
           <circle cx="85" cy="55" r="2" fill="currentColor" />
         </svg>
@@ -73,7 +73,7 @@ export const SmallModule = ({
 
       {/* Glassmorphic Chassis Insert */}
       <div
-        className="relative rounded-[11px] p-3.5 sm:p-5 text-[#D8E0EA] backdrop-blur-md bg-black/40 border border-slate-800/60 flex flex-col justify-between flex-1 overflow-hidden transition-all duration-500 ease-out"
+        className="relative rounded-none p-3.5 sm:p-5 text-[#D8E0EA] backdrop-blur-md bg-black/40 border border-slate-800/60 flex flex-col justify-between flex-1 overflow-hidden transition-all duration-500 ease-out"
         style={{
           boxShadow: isHighlighted
             ? `inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -2px 10px ${app.accentColor}25`
@@ -109,10 +109,10 @@ export const SmallModule = ({
         {/* Module Header Strip */}
         <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-2 px-3 sm:px-4 relative z-10">
           <div className="flex items-center gap-2">
-            <span className="text-[9px] font-mono tracking-widest px-1.5 py-0.5 rounded bg-black/50 text-[#9FB0C4] font-bold border border-slate-800/80 shadow-inner">
+            <span className="text-[9px] font-mono tracking-widest px-1.5 py-0.5 rounded-none bg-black/50 text-[#9FB0C4] font-bold border border-slate-800/80 shadow-inner">
               {slotNumber}
             </span>
-            <span className="text-[8.5px] font-mono px-1.5 py-0.5 rounded bg-slate-900/60 text-[#DCE5F2] border border-slate-700/60 font-bold uppercase flex items-center gap-1">
+            <span className="text-[8.5px] font-mono px-1.5 py-0.5 rounded-none bg-slate-900/60 text-[#DCE5F2] border border-slate-700/60 font-bold uppercase flex items-center gap-1">
               <Cpu className="w-2.5 h-2.5 text-cyan-400" />
               {app.stack}
             </span>
@@ -120,10 +120,10 @@ export const SmallModule = ({
 
           <div className="flex items-center gap-1.5">
             <div
-              className="w-2 h-2 rounded-full transition-all duration-300"
+              className="w-2 h-2 rounded-none transition-all duration-300"
               style={{
                 backgroundColor: isEnergized ? app.accentColor : '#334155',
-                boxShadow: isEnergized ? `0 0 8px ${app.accentColor}, 0 0 14px ${app.accentColor}60` : 'none',
+                boxShadow: isEnergized ? `0 0 5px ${app.accentColor}CC` : `0 0 3px ${app.accentColor}55`,
               }}
             />
             <span className="text-[8px] font-mono text-[#8C9CAF] uppercase font-bold">
@@ -145,13 +145,13 @@ export const SmallModule = ({
               height={130}
             />
             {/* ATTN dB Badge Overlay from Spec Diagram */}
-            <div className="absolute bottom-6 left-3 bg-black/80 border border-slate-700/80 px-2 py-0.5 rounded text-[8.5px] font-mono font-bold text-cyan-300 shadow-md">
+            <div className="absolute bottom-6 left-3 bg-black/80 border border-slate-700/80 px-2 py-0.5 rounded-none text-[8.5px] font-mono font-bold text-cyan-300 shadow-md">
               ATTN: {(localAttn * 10).toFixed(1)} dB
             </div>
           </div>
 
           {/* Local Attenuation Spec Control Strip: Knob + (-) (+) Buttons */}
-          <div className="flex items-center justify-between bg-black/50 border border-slate-800/80 px-2.5 py-1 rounded-md mt-1.5 font-mono text-[9px]">
+          <div className="flex items-center justify-between bg-black/50 border border-slate-800/80 px-2.5 py-1 rounded-none mt-1.5 font-mono text-[9px]">
             <div className="flex items-center gap-2">
               <RotaryKnob
                 value={localAttn * 100}
@@ -169,14 +169,14 @@ export const SmallModule = ({
               <button
                 type="button"
                 onClick={() => setLocalAttn((prev) => Math.max(0.1, +(prev - 0.1).toFixed(2)))}
-                className="w-5 h-5 rounded bg-slate-900 border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 active:scale-95 flex items-center justify-center cursor-pointer"
+                className="w-5 h-5 rounded-none bg-slate-900 border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 active:scale-95 flex items-center justify-center cursor-pointer"
               >
                 -
               </button>
               <button
                 type="button"
                 onClick={() => setLocalAttn((prev) => Math.min(1.5, +(prev + 0.1).toFixed(2)))}
-                className="w-5 h-5 rounded bg-slate-900 border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 active:scale-95 flex items-center justify-center cursor-pointer"
+                className="w-5 h-5 rounded-none bg-slate-900 border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 active:scale-95 flex items-center justify-center cursor-pointer"
               >
                 +
               </button>
@@ -197,7 +197,7 @@ export const SmallModule = ({
           </div>
 
           {/* Tech Tags Arranged in an Inline Micro-Terminal Syntax */}
-          <div className="font-mono text-[9px] bg-black/40 text-emerald-400/90 border border-slate-800/80 rounded px-2.5 py-1.5 shadow-[inset_0_1px_3px_rgba(0,0,0,0.9)] flex flex-wrap items-center gap-x-3 gap-y-1 backdrop-blur-sm">
+          <div className="font-mono text-[9px] bg-black/40 text-emerald-400/90 border border-slate-800/80 rounded-none px-2.5 py-1.5 shadow-[inset_0_1px_3px_rgba(0,0,0,0.9)] flex flex-wrap items-center gap-x-3 gap-y-1 backdrop-blur-sm">
             <div className="flex items-center gap-1 text-[#627286]">
               <Terminal className="w-3 h-3 text-emerald-400" />
               <span>SYS:</span>
@@ -214,7 +214,7 @@ export const SmallModule = ({
           </div>
 
           {/* Bottom Hardware Controls & Small "LAUNCH ->" Push-Button */}
-          <div className="bg-black/30 border border-slate-800/80 rounded p-2 sm:p-2.5 shadow-inner flex items-center justify-between gap-2 mt-1 backdrop-blur-sm">
+          <div className="bg-black/30 border border-slate-800/80 rounded-none p-2 sm:p-2.5 shadow-inner flex items-center justify-between gap-2 mt-1 backdrop-blur-sm">
             {/* Compact Hardware Controls: Rotary Tuner + Power Toggle */}
             <div className="flex items-center gap-3">
               <RotaryKnob
@@ -255,12 +255,12 @@ export const SmallModule = ({
         {/* Chassis Slot Identifier Footer Strip with Asymmetric Micro-Terminal */}
         <div className="mt-2.5 pt-1.5 border-t border-slate-800/80 flex items-center justify-between px-2 text-[8px] font-mono text-slate-500 relative z-10">
           {/* Asymmetric Micro-Terminal: Deployment Host */}
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-900/90 border border-slate-700/60 text-[8px] font-mono tracking-wider shadow-inner backdrop-blur-sm transition-all duration-300 group-hover:border-slate-500/80">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-none bg-slate-900/90 border border-slate-700/60 text-[8px] font-mono tracking-wider shadow-inner backdrop-blur-sm transition-all duration-300 group-hover:border-slate-500/80">
             <span
-              className="w-1.5 h-1.5 rounded-full transition-all duration-300"
+              className="w-1.5 h-1.5 rounded-none transition-all duration-300"
               style={{
                 backgroundColor: app.accentColor,
-                boxShadow: isHighlighted ? `0 0 8px ${app.accentColor}` : `0 0 3px ${app.accentColor}60`,
+                boxShadow: isHighlighted ? `0 0 6px ${app.accentColor}CC` : `0 0 3px ${app.accentColor}55`,
               }}
             />
             <span className="text-slate-400 font-bold uppercase">HOST:</span>

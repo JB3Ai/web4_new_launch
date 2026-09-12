@@ -80,20 +80,9 @@ export default function App() {
     { id: 'REPORTS', label: 'DD REPORTS' },
     { id: 'APPS', label: 'CORE APPS' },
   ];
-  const sectorByAppId = {
-    isikolo: 'WEB',
-    skytime: 'WEB',
-    'business-redesign': 'WEB',
-    neurofam: 'FAMILY',
-    'isidore-diligence': 'REPORTS',
-    'os3-agentbuilder': 'APPS',
-    'jb3-command-centre': 'APPS',
-    'founder-portfolio': 'APPS',
-    'os3-demo-area': 'APPS',
-  };
   const stacksList = sectors.map(({ id }) => id);
   const filteredApps = appsData.filter(
-    (app) => selectedStack === 'ALL' || sectorByAppId[app.id] === selectedStack
+    (app) => selectedStack === 'ALL' || app.sector === selectedStack
   );
   const matchingCount = filteredApps.length;
 
@@ -109,7 +98,7 @@ export default function App() {
 
   const checkMatch = (app) => {
     if (selectedStack === 'ALL') return true;
-    return sectorByAppId[app.id] === selectedStack;
+    return app.sector === selectedStack;
   };
 
   const handleSubscribe = (e) => {
@@ -196,8 +185,8 @@ export default function App() {
           {/* 19-inch asymmetric instrument bay matrix */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {filteredApps.map((app) => {
-              const isLarge = ['isikolo', 'os3-agentbuilder', 'jb3-command-centre'].includes(app.id);
-              const slotNumber = `BAY-${String(appsData.indexOf(app) + 1).padStart(2, '0')}`;
+              const isLarge = ['BAY-01', 'BAY-04', 'BAY-07'].includes(app.slot);
+              const slotNumber = app.slot;
 
               return (
                 <div
@@ -442,12 +431,12 @@ export default function App() {
                       placeholder="Enter your email for updates..."
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
-                      className="w-full bg-black/80 border border-slate-700 focus:border-cyan-400 text-white placeholder-slate-500 text-xs sm:text-sm font-mono pl-10 pr-4 py-3 rounded-lg outline-none transition-all shadow-inner focus:shadow-[0_0_12px_rgba(6,182,212,0.3)]"
+                      className="w-full bg-black/80 border border-slate-700 focus:border-cyan-400 text-white placeholder-slate-500 text-xs sm:text-sm font-mono pl-10 pr-4 py-3 rounded-none outline-none transition-all shadow-inner focus:shadow-[0_0_12px_rgba(6,182,212,0.3)]"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-mono font-black text-xs sm:text-sm uppercase tracking-wider rounded-lg transition-all shadow-[0_0_16px_rgba(16,185,129,0.4)] cursor-pointer flex items-center justify-center gap-2 shrink-0 active:scale-95"
+                    className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-mono font-black text-xs sm:text-sm uppercase tracking-wider rounded-none transition-all shadow-[0_0_16px_rgba(16,185,129,0.4)] cursor-pointer flex items-center justify-center gap-2 shrink-0 active:scale-95"
                   >
                     <span>SIGN UP HERE</span>
                   </button>

@@ -37,7 +37,7 @@ export const LargeModule = ({
       id={`module-${app.id}`}
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
-      className={`relative rounded-xl p-[1px] select-none transition-all duration-500 ease-out transform group ${
+      className={`relative rounded-none p-[1px] select-none transition-all duration-500 ease-out transform group ${
         isCardHovered ? 'scale-[1.015] z-30' : 'scale-100 z-10'
       }`}
       style={{
@@ -65,7 +65,7 @@ export const LargeModule = ({
           <circle cx="55" cy="20" r="3" fill="currentColor" />
           <circle cx="85" cy="55" r="3" fill="currentColor" />
           <circle cx="130" cy="55" r="4" fill="none" strokeWidth="1.5" />
-          <rect x="95" y="74" width="30" height="12" rx="2" fill="none" strokeWidth="0.8" />
+          <rect x="95" y="74" width="30" height="12" rx="0" fill="none" strokeWidth="0.8" />
           <path d="M85 55 L115 25" fill="none" strokeWidth="0.75" strokeDasharray="2 2" />
           <circle cx="115" cy="25" r="2" fill="currentColor" />
         </svg>
@@ -73,7 +73,7 @@ export const LargeModule = ({
 
       {/* Glassmorphic Chassis Insert: backdrop-blur-md, bg-black/40, border border-slate-800/60 */}
       <div
-        className="relative rounded-[11px] p-4 sm:p-6 text-[#D8E0EA] backdrop-blur-md bg-black/40 border border-slate-800/60 overflow-hidden transition-all duration-500 ease-out"
+        className="relative rounded-none p-4 sm:p-6 text-[#D8E0EA] backdrop-blur-md bg-black/40 border border-slate-800/60 overflow-hidden transition-all duration-500 ease-out"
         style={{
           boxShadow: isHighlighted
             ? `inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -2px 10px ${app.accentColor}25`
@@ -122,18 +122,18 @@ export const LargeModule = ({
             {/* Header & App Title */}
             <div>
               <div className="flex items-center gap-2.5 mb-2">
-                <span className="text-[9.5px] font-mono tracking-widest px-2 py-0.5 rounded bg-black/50 text-[#9FB0C4] font-bold border border-slate-800/80 shadow-inner">
+                <span className="text-[9.5px] font-mono tracking-widest px-2 py-0.5 rounded-none bg-black/50 text-[#9FB0C4] font-bold border border-slate-800/80 shadow-inner">
                   {slotNumber}
                 </span>
-                <span className="text-[9.5px] font-mono px-2 py-0.5 rounded bg-slate-900/60 text-[#E2E8F0] border border-slate-700/60 font-bold uppercase tracking-wider flex items-center gap-1">
+                <span className="text-[9.5px] font-mono px-2 py-0.5 rounded-none bg-slate-900/60 text-[#E2E8F0] border border-slate-700/60 font-bold uppercase tracking-wider flex items-center gap-1">
                   <Cpu className="w-3 h-3 text-cyan-400" />
                   STACK: {app.stack}
                 </span>
                 <div
-                  className="w-2.5 h-2.5 rounded-full ml-auto transition-all duration-300"
+                  className="w-2.5 h-2.5 rounded-none ml-auto transition-all duration-300"
                   style={{
                     backgroundColor: isEnergized ? app.accentColor : '#334155',
-                    boxShadow: isEnergized ? `0 0 10px ${app.accentColor}, 0 0 18px ${app.accentColor}60` : 'none',
+                    boxShadow: isEnergized ? `0 0 6px ${app.accentColor}CC` : `0 0 3px ${app.accentColor}55`,
                   }}
                   title={isEnergized ? 'ACTIVE BEAM' : 'STANDBY'}
                 />
@@ -145,7 +145,7 @@ export const LargeModule = ({
             </div>
 
             {/* Monospace Description Block with Terminal Accent */}
-            <div className="bg-black/40 border border-slate-800/80 rounded p-3 shadow-[inset_0_2px_8px_rgba(0,0,0,0.9)] backdrop-blur-sm">
+            <div className="bg-black/40 border border-slate-800/80 rounded-none p-3 shadow-[inset_0_2px_8px_rgba(0,0,0,0.9)] backdrop-blur-sm">
               <div className="flex items-center gap-1.5 text-[8px] font-mono text-slate-400 uppercase tracking-wider mb-1.5 pb-1 border-b border-slate-800/80">
                 <Terminal className="w-3 h-3 text-emerald-400" />
                 <span>TELEMETRY SPECIFICATION // SYS.IDENT</span>
@@ -156,7 +156,7 @@ export const LargeModule = ({
             </div>
 
             {/* Hardware Controls Sub-Bay: Toggle Switch + Rotating Click-Knobs */}
-            <div className="bg-black/30 border border-slate-800/80 rounded p-3 shadow-inner flex items-center justify-between gap-4 backdrop-blur-sm">
+            <div className="bg-black/30 border border-slate-800/80 rounded-none p-3 shadow-inner flex items-center justify-between gap-4 backdrop-blur-sm">
               {/* Vertical Metal Toggle Switch with LED Indicator */}
               <ToggleSwitch
                 checked={localPower}
@@ -195,7 +195,7 @@ export const LargeModule = ({
           </div>
 
           {/* ================= RIGHT SIDE: Prominent <OscilloscopeScreen /> & <PushButton /> ================= */}
-          <div className="lg:col-span-7 flex flex-col justify-between gap-3 bg-black/30 border border-slate-800/80 rounded p-3 sm:p-4 shadow-inner backdrop-blur-sm">
+          <div className="lg:col-span-7 flex flex-col justify-between gap-3 bg-black/30 border border-slate-800/80 rounded-none p-3 sm:p-4 shadow-inner backdrop-blur-sm">
             {/* Top Status Bar of Right Panel */}
             <div className="flex items-center justify-between text-[9px] font-mono text-[#8292A6] px-1 pb-1 border-b border-slate-800/80">
               <span className="flex items-center gap-1.5">
@@ -268,12 +268,12 @@ export const LargeModule = ({
           </div>
 
           {/* Asymmetric Micro-Terminal: Deployment Host */}
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-slate-700/60 text-[8.5px] font-mono tracking-wider shadow-inner backdrop-blur-sm transition-all duration-300 group-hover:border-slate-500/80">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-none bg-slate-900/90 border border-slate-700/60 text-[8.5px] font-mono tracking-wider shadow-inner backdrop-blur-sm transition-all duration-300 group-hover:border-slate-500/80">
             <span
-              className="w-1.5 h-1.5 rounded-full transition-all duration-300"
+              className="w-1.5 h-1.5 rounded-none transition-all duration-300"
               style={{
                 backgroundColor: app.accentColor,
-                boxShadow: isHighlighted ? `0 0 8px ${app.accentColor}` : `0 0 4px ${app.accentColor}60`,
+                boxShadow: isHighlighted ? `0 0 6px ${app.accentColor}CC` : `0 0 3px ${app.accentColor}55`,
               }}
             />
             <span className="text-slate-400 font-bold uppercase">HOST:</span>
