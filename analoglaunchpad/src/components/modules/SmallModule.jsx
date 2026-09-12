@@ -33,22 +33,18 @@ export const SmallModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
         isSmall
       />
 
-      <div className="border border-dashed border-slate-800/80 bg-slate-950/30 p-2 flex items-center justify-center h-16 relative rounded-none overflow-hidden group/diagram">
-        {app.imagePlaceholder ? (
-          <img
-            src={app.imagePlaceholder}
-            alt={`${app.title} architecture preview`}
-            className="relative z-10 h-full w-full object-cover rounded-none transition-transform duration-300 group-hover/diagram:scale-95"
-          />
-        ) : (
-          <span className="text-[9px] text-slate-500 font-black tracking-widest z-10">
-            [ BLOCKS DIAGRAM // RENDER PENDING ]
-          </span>
-        )}
-        <div
-          className="absolute inset-0 opacity-[0.02] pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 0)', backgroundSize: '6px 6px' }}
+      <div className="border border-slate-800/80 bg-slate-950/40 flex items-center justify-center h-24 mb-4 border-dashed relative rounded-none overflow-hidden group/img">
+        <img
+          src={`/assets/previews/${app.imagePlaceholder}`}
+          alt={app.title}
+          className="w-full h-full object-cover opacity-40 group-hover/img:opacity-75 transition-all duration-300 filter grayscale contrast-125 brightness-90 mix-blend-screen"
+          onError={(e) => {
+            e.target.style.display = 'none';
+          }}
         />
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-slate-950/20">
+          <span className="text-[10px] text-slate-500 font-bold tracking-widest font-mono">// MODULE BLOCK: {app.slot} //</span>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col justify-between min-h-[100px]">

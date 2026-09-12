@@ -40,23 +40,18 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
           </div>
         </div>
 
-        <div className="border border-dashed border-slate-800/80 bg-slate-950/30 p-2 flex items-center justify-center h-24 mb-4 relative rounded-none group/preview overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-[0.02] pointer-events-none"
-            style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 0)', backgroundSize: '8px 8px' }}
+        <div className="border border-slate-800/80 bg-slate-950/40 flex items-center justify-center h-24 mb-4 border-dashed relative rounded-none overflow-hidden group/img">
+          <img
+            src={`/assets/previews/${app.imagePlaceholder}`}
+            alt={app.title}
+            className="w-full h-full object-cover opacity-40 group-hover/img:opacity-75 transition-all duration-300 filter grayscale contrast-125 brightness-90 mix-blend-screen"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
           />
-          {app.imagePlaceholder ? (
-            <img
-              src={app.imagePlaceholder}
-              alt={`${app.title} preview`}
-              className="relative z-10 h-full w-full object-cover rounded-none transition-transform duration-300 group-hover/preview:scale-95"
-            />
-          ) : (
-            <div className="text-center z-10">
-              <span className="text-[10px] text-slate-500 font-bold tracking-widest block mb-0.5">[ DIAGNOSTIC PREVIEW NODE ]</span>
-              <span className="text-[9px] text-slate-600 font-mono block">RENDER PENDING</span>
-            </div>
-          )}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-slate-950/20">
+            <span className="text-[10px] text-slate-500 font-bold tracking-widest font-mono">// MODULE BLOCK: {app.slot} //</span>
+          </div>
         </div>
 
         <div className="flex items-center gap-4 text-[10px] text-slate-500 border-t border-slate-900/80 pt-3 font-mono">
