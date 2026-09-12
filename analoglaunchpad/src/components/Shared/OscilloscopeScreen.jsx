@@ -13,6 +13,8 @@ import React, { useRef, useEffect, useState } from 'react';
 export const OscilloscopeScreen = ({
   waveType = 'sine',
   accentColor = '#38EF7D',
+  color,
+  isSmall = false,
   power = true,
   frequency = 1,
   amplitude = 1,
@@ -21,6 +23,7 @@ export const OscilloscopeScreen = ({
   showGraticule = true,
   className = '',
 }) => {
+  const beamColor = color || accentColor;
   const canvasRef = useRef(null);
   const screenRef = useRef(null);
   // Animation values change every frame, so keep them outside React's render cycle.
@@ -62,8 +65,15 @@ export const OscilloscopeScreen = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const { width: w, height: h } = canvas;
+    const w = dimensions.width;
+    const h = dimensions.height;
     if (w === 0 || h === 0) return;
+
+    // Cap density at 2x to keep retina output crisp without excessive pixels.
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(w * pixelRatio);
+    canvas.height = Math.round(h * pixelRatio);
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
     const cx = w / 2;
     const cy = h / 2;
@@ -71,7 +81,8 @@ export const OscilloscopeScreen = ({
     const amp = (h / 2.7) * clampedAmplitude;
     const freq = Math.min(Math.max(frequency, 0.2), 4);
     const sineStep = Math.max(2, Math.ceil(w / 180));
-    const lissajousPoints = 120;
+    const lissajousPoints = isSmall ? 96 : 120;
+    const gridColumns = isSmall ? 8 : 12;
     const twoPi = Math.PI * 2;
     const radarMaxRadius = Math.min(cx, cy) * 0.88;
     const radarBlips = [
@@ -84,17 +95,18 @@ export const OscilloscopeScreen = ({
     // The tube background and reticle do not change frame-to-frame. Rasterize
     // them once, then copy the cached layer during each animation frame.
     const staticLayer = document.createElement('canvas');
-    staticLayer.width = w;
-    staticLayer.height = h;
+    staticLayer.width = Math.round(w * pixelRatio);
+    staticLayer.height = Math.round(h * pixelRatio);
     const staticCtx = staticLayer.getContext('2d');
     if (!staticCtx) return;
+    staticCtx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
     staticCtx.fillStyle = power ? '#090D0B' : '#121413';
     staticCtx.fillRect(0, 0, w, h);
 
     if (power) {
       const radialGlow = staticCtx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(w, h) * 0.75);
-      radialGlow.addColorStop(0, `${accentColor}1C`);
+      radialGlow.addColorStop(0, `${beamColor}1C`);
       radialGlow.addColorStop(1, 'transparent');
       staticCtx.fillStyle = radialGlow;
       staticCtx.fillRect(0, 0, w, h);
@@ -103,8 +115,8 @@ export const OscilloscopeScreen = ({
         staticCtx.lineWidth = 1;
         staticCtx.strokeStyle = 'rgba(255, 255, 255, 0.065)';
         staticCtx.beginPath();
-        for (let i = 0; i <= 8; i++) {
-          const x = Math.round((w / 8) * i) + 0.5;
+        for (let i = 0; i <= gridColumns; i++) {
+          const x = Math.round((w / gridColumns) * i) + 0.5;
           staticCtx.moveTo(x, 0);
           staticCtx.lineTo(x, h);
         }
@@ -115,7 +127,7 @@ export const OscilloscopeScreen = ({
         }
         staticCtx.stroke();
 
-        staticCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        staticCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
         staticCtx.beginPath();
         for (let i = 0; i <= 32; i++) {
           const x = (w / 32) * i;
@@ -132,7 +144,7 @@ export const OscilloscopeScreen = ({
 
       if (waveType === 'radar' || waveType === 'vctradar') {
         staticCtx.lineWidth = 1;
-        staticCtx.strokeStyle = `${accentColor}40`;
+        staticCtx.strokeStyle = `${beamColor}40`;
         staticCtx.beginPath();
         for (const radiusFraction of [0.33, 0.66, 1]) {
           staticCtx.moveTo(cx + radarMaxRadius * radiusFraction, cy);
@@ -149,7 +161,7 @@ export const OscilloscopeScreen = ({
     }
 
     if (!power) {
-      ctx.drawImage(staticLayer, 0, 0);
+      ctx.drawImage(staticLayer, 0, 0, w, h);
       return;
     }
 
@@ -158,8 +170,8 @@ export const OscilloscopeScreen = ({
         ? ctx.createRadialGradient(cx, cy, 5, cx, cy, radarMaxRadius)
         : null;
     if (radarTrailGradient) {
-      radarTrailGradient.addColorStop(0, `${accentColor}35`);
-      radarTrailGradient.addColorStop(1, `${accentColor}05`);
+      radarTrailGradient.addColorStop(0, `${beamColor}35`);
+      radarTrailGradient.addColorStop(1, `${beamColor}05`);
     }
 
     let animId;
@@ -184,13 +196,13 @@ export const OscilloscopeScreen = ({
       const speedMultiplier = speedMultiplierRef.current;
       const frameScale = elapsedSeconds * 60;
 
-      ctx.drawImage(staticLayer, 0, 0);
+      ctx.drawImage(staticLayer, 0, 0, w, h);
 
       ctx.save();
       ctx.shadowBlur = speedMultiplier > 1.05 ? 12 : 8;
-      ctx.shadowColor = accentColor;
-      ctx.strokeStyle = accentColor;
-      ctx.fillStyle = accentColor;
+      ctx.shadowColor = beamColor;
+      ctx.strokeStyle = beamColor;
+      ctx.fillStyle = beamColor;
       ctx.lineWidth = speedMultiplier > 1.05 ? 2.2 : 2.0;
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
@@ -242,7 +254,7 @@ export const OscilloscopeScreen = ({
         ctx.fill();
 
         ctx.lineWidth = 2.4;
-        ctx.strokeStyle = accentColor;
+        ctx.strokeStyle = beamColor;
         const armX = cx + Math.cos(sweepAngle) * radarMaxRadius;
         const armY = cy + Math.sin(sweepAngle) * radarMaxRadius;
         ctx.beginPath();
@@ -257,7 +269,7 @@ export const OscilloscopeScreen = ({
           const diff = (sweepAngle - angle + Math.PI * 4) % twoPi;
           if (diff < 1.3) {
             const alpha = 1 - diff / 1.3;
-            ctx.fillStyle = accentColor;
+            ctx.fillStyle = beamColor;
             ctx.globalAlpha = alpha;
             ctx.beginPath();
             ctx.arc(bx, by, 3.5, 0, Math.PI * 2);
@@ -279,7 +291,7 @@ export const OscilloscopeScreen = ({
           const bx = startX + b * barWidth;
           const by = h * 0.85 - barH;
 
-          ctx.fillStyle = accentColor;
+          ctx.fillStyle = beamColor;
           ctx.fillRect(bx + 1, by, barWidth - 2, barH);
         }
         phase = (phase + 0.04 * speedMultiplier * frameScale) % twoPi;
@@ -308,7 +320,7 @@ export const OscilloscopeScreen = ({
         const nx = pivotX + Math.cos(needleAngle) * (meterR * 0.9);
         const ny = pivotY + Math.sin(needleAngle) * (meterR * 0.9);
 
-        ctx.strokeStyle = amplitude > 1.25 ? '#FF3366' : accentColor;
+        ctx.strokeStyle = amplitude > 1.25 ? '#FF3366' : beamColor;
         ctx.lineWidth = 2.5;
         ctx.beginPath();
         ctx.moveTo(pivotX, pivotY);
@@ -334,7 +346,7 @@ export const OscilloscopeScreen = ({
             const px = c * stepX;
             const py = r * stepY;
             const pulse = 0.2 + 0.8 * Math.abs(Math.sin(phase * 2 + c * 0.5 + r * 0.3));
-            ctx.fillStyle = accentColor;
+            ctx.fillStyle = beamColor;
             ctx.globalAlpha = Math.min(pulse * amplitude, 1.0);
             ctx.beginPath();
             ctx.arc(px, py, 2.5, 0, Math.PI * 2);
@@ -345,7 +357,7 @@ export const OscilloscopeScreen = ({
         phase = (phase + 0.035 * speedMultiplier * frameScale) % twoPi;
       } else if (waveType === 'matrix') {
         ctx.font = '9px monospace';
-        ctx.fillStyle = accentColor;
+        ctx.fillStyle = beamColor;
         ctx.shadowBlur = 4;
         const colWidth = w / matrixCols;
 
@@ -353,7 +365,7 @@ export const OscilloscopeScreen = ({
           const y = (drops[c] * 10) % (h + 20);
           ctx.fillStyle = '#FFFFFF';
           ctx.fillText(String.fromCharCode(0x30a0 + Math.floor(Math.random() * 30)), c * colWidth + 2, y);
-          ctx.fillStyle = accentColor;
+          ctx.fillStyle = beamColor;
           ctx.fillRect(c * colWidth + 4, Math.max(0, y - 10), 2, 7);
           ctx.fillRect(c * colWidth + 4, Math.max(0, y - 20), 1.5, 5);
           drops[c] += (0.35 + (c % 4) * 0.12) * speedMultiplier;
@@ -373,7 +385,7 @@ export const OscilloscopeScreen = ({
           const segs = 6;
           const segH = barH / segs;
           for (let s = 0; s < segs; s++) {
-            ctx.fillStyle = s >= segs - 2 ? '#FF4444' : accentColor;
+            ctx.fillStyle = s >= segs - 2 ? '#FF4444' : beamColor;
             ctx.fillRect(bx + 1.5, by + s * segH, barWidth - 3, segH - 1.5);
           }
         }
@@ -386,7 +398,7 @@ export const OscilloscopeScreen = ({
 
     render();
     return () => cancelAnimationFrame(animId);
-  }, [power, waveType, accentColor, frequency, amplitude, noise, dimensions, showGraticule]);
+  }, [power, waveType, beamColor, frequency, amplitude, noise, dimensions, showGraticule, isSmall]);
 
   return (
     <div
@@ -440,7 +452,7 @@ export const OscilloscopeScreen = ({
         <span className="tracking-wider">BEAM: 10kV</span>
         <span
           className="font-bold uppercase tracking-wider transition-colors"
-          style={{ color: isHovered ? '#FFFFFF' : accentColor }}
+          style={{ color: isHovered ? '#FFFFFF' : beamColor }}
         >
           {waveType} {isHovered ? '⚡ BOOST' : 'MODE'}
         </span>

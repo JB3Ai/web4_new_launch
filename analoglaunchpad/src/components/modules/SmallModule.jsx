@@ -25,7 +25,13 @@ export const SmallModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
         </span>
       </div>
 
-      <OscilloscopeScreen waveType={app.waveType} accentColor={app.accentColor} power={mainsPower} height={130} />
+      <OscilloscopeScreen
+        waveType={app.waveType}
+        accentColor={app.accentColor}
+        power={mainsPower}
+        height={130}
+        isSmall
+      />
 
       <div className="border border-dashed border-slate-800/80 bg-slate-950/30 p-2 flex items-center justify-center h-16 relative rounded-none overflow-hidden group/diagram">
         {app.imagePlaceholder ? (
