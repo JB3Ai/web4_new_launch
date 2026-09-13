@@ -4,6 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import {defineConfig, Plugin} from 'vite';
 
+const appRoot = path.resolve(__dirname, 'analoglaunchpad');
+
 // LINT.IfChange(aistudio_media_plugin)
 function aistudioMediaPlugin(): Plugin {
   return {
@@ -16,12 +18,12 @@ function aistudioMediaPlugin(): Plugin {
             const decodedPath = decodeURIComponent(rawPath);
             const relativePath = decodedPath.replace(/^\//, '');
             const aistudioDir = path.resolve(
-              __dirname,
+              appRoot,
               'public',
               'assets',
               'aistudio',
             );
-            const filePath = path.resolve(__dirname, 'public', relativePath);
+            const filePath = path.resolve(appRoot, 'public', relativePath);
             if (
               filePath.startsWith(aistudioDir + path.sep) &&
               fs.existsSync(filePath) &&
@@ -66,11 +68,19 @@ function aistudioMediaPlugin(): Plugin {
 
 export default defineConfig(() => {
   return {
+    // The maintained application lives in analoglaunchpad/. Keep the build
+    // output at the repository root so hosts using default settings deploy it.
+    root: appRoot,
+    publicDir: path.resolve(appRoot, 'public'),
     plugins: [react(), tailwindcss(), aistudioMediaPlugin()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': appRoot,
       },
+    },
+    build: {
+      outDir: path.resolve(__dirname, 'dist'),
+      emptyOutDir: true,
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
