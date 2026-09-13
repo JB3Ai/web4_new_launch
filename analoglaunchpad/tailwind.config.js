@@ -7,6 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
+        chassis: {
+          DEFAULT: '#D2C9BD',
+          shadow: '#A1A89B',
+          rail: '#6E716A',
+        },
+        gunmetal: {
+          DEFAULT: '#1E222A',
+          border: '#2A303C',
+          inset: '#11151B',
+        },
+        safety: {
+          red: '#EF4444',
+          amber: '#F59E0B',
+        },
         lab: {
           cream: '#D2C9BD',       // Vintage Conar chassis paint
           creamDark: '#BAAFA1',   // Shadow tones for stamped metal panels

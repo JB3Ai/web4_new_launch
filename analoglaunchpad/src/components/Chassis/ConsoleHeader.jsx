@@ -3,24 +3,24 @@ import { Activity } from 'lucide-react';
 
 /** Master console readout and sector filter controller. */
 export const ConsoleHeader = ({ sectors, activeFilter, onFilterChange }) => (
-  <header className="border border-slate-800/50 bg-slate-950/70 p-4 flex flex-col md:flex-row items-center justify-between gap-4 relative rounded-none">
+  <header className="border-2 border-[#1E222A] bg-[#1E222A] p-4 flex flex-col md:flex-row items-center justify-between gap-4 relative rounded-none shadow-[inset_0_0_12px_rgba(0,0,0,0.72),0_3px_0_rgba(20,24,29,0.5)]">
     <div className="flex items-center gap-3">
-      <div className="p-2 border border-slate-800 bg-slate-900/40 rounded-none">
-        <Activity className="text-emerald-500 animate-pulse" size={18} />
+      <div className="p-2 border-2 border-[#2A303C] bg-[#1E222A] rounded-none shadow-[inset_0_0_8px_rgba(0,0,0,0.7)]">
+        <Activity className="text-[#7BE28C] animate-pulse" size={18} />
       </div>
       <div>
         <h1 className="text-xs font-black tracking-widest text-white uppercase font-mono">
-          JB³ SYSTEM MANAGER // MULTI-CHANNEL PRODUCTION LAUNCHPAD
+          JB³ SYSTEM MANAGER // 19-INCH INSTRUMENTATION MATRIX
         </h1>
-        <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mt-0.5">
-          ENVIRONMENT: MASTER_CONSOLE_ACTIVE // CHASSIS ONLINE
+        <p className="text-[9px] font-mono text-slate-400 uppercase tracking-widest mt-0.5">
+          CHASSIS STATE: HIGH-CONTRAST LINK INTEGRATION DEPLOYED
         </p>
       </div>
     </div>
 
     <nav
       aria-label="Launchpad sector filters"
-      className="flex items-center flex-wrap gap-1 border border-slate-900 bg-slate-950 p-1 rounded-none"
+      className="flex items-center flex-wrap gap-1 border-2 border-[#2A303C] bg-[#1E222A] p-1 rounded-none shadow-[inset_0_0_9px_rgba(0,0,0,0.72)]"
     >
       {sectors.map((sector) => {
         const isActive = activeFilter === sector.id;
@@ -32,8 +32,8 @@ export const ConsoleHeader = ({ sectors, activeFilter, onFilterChange }) => (
             onClick={() => onFilterChange(sector.id)}
             className={`px-3 py-1.5 text-[10px] font-mono tracking-widest uppercase transition-all border rounded-none ${
               isActive
-                ? 'bg-slate-900 border-slate-700 text-white font-bold shadow-md shadow-black/40'
-                : 'bg-transparent border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-900/30'
+                ? 'bg-[#E09A22] border-[#7A4B08] text-[#19140B] font-black shadow-[0_2px_0_#7A4B08,inset_0_1px_0_rgba(255,255,255,0.35)]'
+                : 'bg-[#282E37] border-[#47505B] text-slate-300 hover:text-[#FFF8EC] hover:bg-[#343C47]'
             }`}
           >
             {sector.label}
