@@ -31,6 +31,7 @@ export const OscilloscopeScreen = ({
   const hoverTargetRef = useRef(1);
   const [dimensions, setDimensions] = useState({ width: 300, height: height - 30 });
   const [isHovered, setIsHovered] = useState(false);
+  const [isAnimationActive, setIsAnimationActive] = useState(true);
 
   // Measure screen inner dimensions without causing feedback loop
   useEffect(() => {
@@ -57,6 +58,35 @@ export const OscilloscopeScreen = ({
     observer.observe(screenEl);
     return () => observer.disconnect();
   }, [height]);
+
+  // Stop the canvas loop when its module is offscreen or the tab is hidden.
+  // A small root margin restarts it before the display scrolls into view.
+  useEffect(() => {
+    const screenEl = screenRef.current;
+    if (!screenEl) return;
+
+    let isNearViewport = true;
+    const updateAnimationState = () => {
+      setIsAnimationActive(isNearViewport && !document.hidden);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isNearViewport = entry.isIntersecting;
+        updateAnimationState();
+      },
+      { rootMargin: '160px 0px' }
+    );
+
+    observer.observe(screenEl);
+    document.addEventListener('visibilitychange', updateAnimationState);
+    updateAnimationState();
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', updateAnimationState);
+    };
+  }, []);
 
   // Main CRT Vector Beam Rendering Loop
   useEffect(() => {
@@ -160,7 +190,7 @@ export const OscilloscopeScreen = ({
       staticCtx.fillText('NO BEAM / STANDBY', cx, cy);
     }
 
-    if (!power) {
+    if (!power || !isAnimationActive) {
       ctx.drawImage(staticLayer, 0, 0, w, h);
       return;
     }
@@ -175,19 +205,31 @@ export const OscilloscopeScreen = ({
     }
 
     let animId;
-    let lastFrameTime = 0;
+    let lastRenderTime = 0;
+    let frameBudgetTime = 0;
     let phase = 0;
     let sweepAngle = 0;
+    const targetFramesPerSecond = isSmall ? 30 : 45;
+    const frameInterval = 1000 / targetFramesPerSecond;
 
     // Matrix particle drops
     const matrixCols = 18;
     const drops = Array.from({ length: matrixCols }, () => Math.random() * 30);
 
     const render = (timestamp) => {
-      const elapsedSeconds = lastFrameTime
-        ? Math.min((timestamp - lastFrameTime) / 1000, 0.05)
-        : 1 / 60;
-      lastFrameTime = timestamp;
+      const timeSinceBudget = timestamp - frameBudgetTime;
+      if (frameBudgetTime && timeSinceBudget < frameInterval) {
+        animId = requestAnimationFrame(render);
+        return;
+      }
+
+      frameBudgetTime = frameBudgetTime
+        ? timestamp - (timeSinceBudget % frameInterval)
+        : timestamp;
+      const elapsedSeconds = lastRenderTime
+        ? Math.min((timestamp - lastRenderTime) / 1000, 0.05)
+        : 1 / targetFramesPerSecond;
+      lastRenderTime = timestamp;
 
       // Frame-rate independent linear interpolation keeps hover acceleration smooth.
       const lerpAmount = Math.min(elapsedSeconds * 9, 1);
@@ -396,9 +438,9 @@ export const OscilloscopeScreen = ({
       animId = requestAnimationFrame(render);
     };
 
-    render();
+    animId = requestAnimationFrame(render);
     return () => cancelAnimationFrame(animId);
-  }, [power, waveType, beamColor, frequency, amplitude, noise, dimensions, showGraticule, isSmall]);
+  }, [power, waveType, beamColor, frequency, amplitude, noise, dimensions, showGraticule, isSmall, isAnimationActive]);
 
   return (
     <div

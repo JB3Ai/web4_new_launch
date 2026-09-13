@@ -8,3 +8,9 @@ coverage/
 !.env.example
 *.zip
 .kilo/
+
+# Machine-local editor and MCP configuration
+.vscode/mcp.json
+
+# Local preview staging copies; production assets live in public/assets/previews
+analoglaunchpad/assets/preview/
