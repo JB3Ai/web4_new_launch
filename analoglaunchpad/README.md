@@ -1,12 +1,13 @@
 # AnalogLaunchpad
 
-AnalogLaunchpad is the JB³ multi-channel production launchpad: a responsive React interface styled as a sharp-edged 1970s instrumentation console. Nine product bays combine live canvas waveforms, sector filtering, mapped preview images, telemetry controls, and direct demo links.
+AnalogLaunchpad is the JB³ multi-channel production launchpad: a responsive React interface styled as a sharp-edged 1970s instrumentation console. A light industrial chassis holds nine recessed black launch bays with live canvas waveforms, mapped preview images, sector filtering, and direct demo links.
 
 Repository: [JB3Ai/web4_new_launch](https://github.com/JB3Ai/web4_new_launch)
 
 ## Features
 
 - Data-driven nine-bay product matrix with large priority modules and compact secondary modules.
+- Industrial matte-cream rack with hard boundaries, deep pitch-black bay inserts, and stamped hex/X fasteners.
 - Sector filters for Web Engine, Family Network, DD Reports, and Core Apps.
 - Canvas-rendered sine, sawtooth, radar, Lissajous, LED, matrix, spectrum, VU needle, and cell-matrix displays.
 - Fluid hover acceleration from `1.0` to `3.2` using elapsed-time linear interpolation.
@@ -14,7 +15,7 @@ Repository: [JB3Ai/web4_new_launch](https://github.com/JB3Ai/web4_new_launch)
 - Automatic animation suspension when a scope is offscreen or the browser tab is hidden.
 - Local screenshot previews with a geometric grayscale treatment and brighter hover state.
 - Amber hardware fallback panel for pending or missing preview renders.
-- Master telemetry controls for gain, oscillator frequency, waveform noise, and console presets.
+- High-contrast red and amber raised launch bricks with clear ready-state labelling.
 
 ## Tech stack
 
@@ -60,12 +61,12 @@ analoglaunchpad/
 │       └── previews/          # Product preview screenshots
 ├── src/
 │   ├── components/
-│   │   ├── Chassis/           # Console header and master controls
+│   │   ├── Chassis/           # Console header
 │   │   ├── modules/           # Large and compact bay blades
 │   │   └── Shared/            # CRT renderer and hardware controls
 │   ├── data/
 │   │   └── appsData.js        # Product catalogue and bay routing
-│   ├── App.jsx                # Filtering, layout, and controller state
+│   ├── App.jsx                # Filtering and rack layout
 │   ├── index.css              # Global console styling
 │   └── main.tsx               # React entry point
 ├── index.html
@@ -87,7 +88,7 @@ Each object in `src/data/appsData.js` defines one physical bay:
 | `sector` | Master-console filter group. |
 | `accentColor` | Waveform and indicator colour. |
 | `waveType` | Oscilloscope renderer mode. |
-| `imagePlaceholder` | Preview filename or `RENDER_PENDING`. |
+| `imagePlaceholder` | Root preview asset path or `RENDER_PENDING`. |
 | `demoUrl` | External launch destination. |
 
 Priority slots `BAY-01`, `BAY-04`, and `BAY-07` render with `LargeModule`; all other slots use `SmallModule`.
@@ -100,25 +101,25 @@ Place preview screenshots in:
 public/assets/previews/
 ```
 
-Store only the filename in `imagePlaceholder`. The module constructs the public URL automatically.
+Store the root public asset path in `imagePlaceholder`.
 
 ```js
-imagePlaceholder: 'BAY01isikolo.jpg'
+imagePlaceholder: '/assets/previews/BAY01isikolo.jpg'
 ```
 
 Current mappings:
 
 | Bay | Product | Preview |
 | --- | --- | --- |
-| BAY-01 | IsiKoloAi Launch | `BAY01isikolo.jpg` |
-| BAY-02 | SkyTime | `BAY02skytime.jpg` |
+| BAY-01 | IsiKoloAi Launch | `/assets/previews/BAY01isikolo.jpg` |
+| BAY-02 | SkyTime | `/assets/previews/BAY02skytime.jpg` |
 | BAY-03 | NeuroFam Analytics | `RENDER_PENDING` |
-| BAY-04 | OS³ AgentBuilder | `BAY004.jpg` |
-| BAY-05 | isidore Due Diligence | `BAY005isidore.jpg` |
+| BAY-04 | OS³ AgentBuilder | `/assets/previews/BAY004.jpg` |
+| BAY-05 | isidore Due Diligence | `/assets/previews/BAY005isidore.jpg` |
 | BAY-06 | Business Redesign (NMS) | `RENDER_PENDING` |
-| BAY-07 | JB³ Command Centre | `BAY007jb3commandcenter.jpg` |
-| BAY-08 | Founder: Jono Blackburn | `BAY08jbprofile.jpg` |
-| BAY-09 | OS³ Demo Area | `BAY009.jpg` |
+| BAY-07 | JB³ Command Centre | `/assets/previews/BAY007jb3commandcenter.jpg` |
+| BAY-08 | Founder: Jono Blackburn | `/assets/previews/BAY08jbprofile.jpg` |
+| BAY-09 | OS³ Demo Area | `/assets/previews/BAY009.jpg` |
 
 When the value is `RENDER_PENDING`, `null`, or an image request fails, the module displays the amber `OFFLINE // TELEMETRY LINK RENDERING...` matrix panel instead of a broken image.
 
