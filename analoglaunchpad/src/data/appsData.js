@@ -13,7 +13,7 @@ export const appsData = [
     accentColor: '#A855F7',
     waveType: 'sine',
     imagePlaceholder: '/assets/BAY01isikolo.jpg',
-    demoUrl: 'https://superdesign.cloud',
+    demoUrl: 'https://isikolo2-web.jono-18a.workers.dev/',
   },
   {
     id: 'skytime',
@@ -25,7 +25,7 @@ export const appsData = [
     accentColor: '#06B6D4',
     waveType: 'sawtooth',
     imagePlaceholder: '/assets/BAY02skytime.jpg',
-    demoUrl: 'https://vercel.app',
+    demoUrl: 'https://skytimetime2.vercel.app/',
   },
   {
     id: 'neurofam',
@@ -37,7 +37,7 @@ export const appsData = [
     accentColor: '#F59E0B',
     waveType: 'radar',
     imagePlaceholder: 'RENDER_PENDING',
-    demoUrl: 'https://vercel.app',
+    demoUrl: 'https://family-app-b.vercel.app/',
   },
   {
     id: 'os3-agentbuilder',
@@ -49,7 +49,7 @@ export const appsData = [
     accentColor: '#10B981',
     waveType: 'lissajous',
     imagePlaceholder: '/assets/BAY004.jpg',
-    demoUrl: 'https://base44.app',
+    demoUrl: 'https://os-agentbuilder.base44.app/',
   },
   {
     id: 'isidore-diligence',
@@ -61,7 +61,7 @@ export const appsData = [
     accentColor: '#EF4444',
     waveType: 'led',
     imagePlaceholder: '/assets/BAY005isidore.jpg',
-    demoUrl: 'https://isidore-due-diligence-live-vercel.app',
+    demoUrl: 'https://isidore-due-diligence-live.vercel.app/',
   },
   {
     id: 'business-redesign',
@@ -85,7 +85,7 @@ export const appsData = [
     accentColor: '#3B82F6',
     waveType: 'spectra',
     imagePlaceholder: '/assets/BAY007jb3commandcenter.jpg',
-    demoUrl: 'https://netlify.app',
+    demoUrl: 'https://jb3aicommanddash.netlify.app/login',
   },
   {
     id: 'founder-portfolio',
