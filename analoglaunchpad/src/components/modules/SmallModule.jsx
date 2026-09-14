@@ -32,7 +32,7 @@ export const SmallModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
   return (
     <article
       id={`module-${app.id}`}
-      className="bg-[#0A0D10] border-4 border-[#1A1F26] p-4 flex flex-col gap-4 relative group transition-colors duration-200 rounded-none h-full shadow-[inset_0_0_20px_rgba(0,0,0,0.9),0_5px_0_#11151B,0_12px_24px_rgba(0,0,0,0.34)]"
+      className="bg-[#0A0D10] text-slate-200 border-4 border-[#1A1F26] p-5 flex flex-col gap-4 relative group transition-colors duration-200 rounded-none h-full justify-between shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_4px_20px_rgba(0,0,0,0.9)]"
       style={{ '--accent': app.accentColor }}
     >
       <BayScrew className="top-1.5 left-1.5" rotation={18} />
@@ -93,7 +93,7 @@ export const SmallModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
 
       <div className="flex-1 flex flex-col justify-between min-h-[100px]">
         <div>
-          <h3 className="text-base font-bold text-[#FFF8EC] uppercase mb-1 tracking-tight">{app.title}</h3>
+          <h3 className="text-base font-black text-[#FFF8EC] uppercase mb-1 tracking-tight">{app.title}</h3>
           <p className="text-[11px] text-slate-300 font-mono line-clamp-2 leading-relaxed">{app.description}</p>
         </div>
 
