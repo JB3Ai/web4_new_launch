@@ -32,7 +32,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
   return (
     <article
       id={`module-${app.id}`}
-      className="bg-[#0A0D10] border-4 border-[#1A1F26] p-5 flex flex-col lg:flex-row gap-5 relative group transition-colors duration-200 rounded-none shadow-[inset_0_0_20px_rgba(0,0,0,0.9),0_5px_0_#11151B,0_12px_24px_rgba(0,0,0,0.34)]"
+      className="bg-[#0A0D10] text-slate-200 border-4 border-[#1A1F26] p-6 flex flex-col lg:flex-row gap-6 relative group transition-colors duration-200 rounded-none shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_4px_20px_rgba(0,0,0,0.9)]"
       style={{ '--accent': app.accentColor }}
     >
       <BayScrew className="top-1.5 left-1.5" rotation={18} />
@@ -41,7 +41,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
       <BayScrew className="right-1.5 bottom-1.5" rotation={142} />
       <div className="absolute inset-[3px] border border-[#303946] pointer-events-none rounded-none" />
 
-      <div className="flex-1 flex flex-col justify-between z-10">
+      <div className="flex-1 flex flex-col justify-between z-10 pt-2 pl-2">
         <div>
           <div className="flex items-center justify-between border-2 border-black/80 bg-[#11161D] px-3 py-2 mb-3">
             <span className="text-[11px] font-mono font-black tracking-widest text-[#E9DED0]">LAUNCH BAY // {slot}</span>
@@ -50,7 +50,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
             </span>
           </div>
 
-          <h2 className="text-lg font-bold tracking-tight text-[#FFF8EC] mb-2 uppercase">
+          <h2 className="text-xl font-black tracking-tight text-[#FFF8EC] mb-2 uppercase">
             {app.title}
           </h2>
 
@@ -63,7 +63,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
           </div>
         </div>
 
-        <div className={`border-2 border-black/80 flex items-center justify-center h-28 mb-4 relative rounded-none overflow-hidden group/img shadow-[inset_0_0_12px_rgba(0,0,0,0.8)] ${previewUnavailable ? 'bg-[#050709]' : 'bg-[#0E1319]'}`}>
+        <div className={`border-2 border-black/80 flex items-center justify-center h-32 my-4 relative rounded-none overflow-hidden group/img shadow-[inset_0_0_12px_rgba(0,0,0,0.8)] ${previewUnavailable ? 'bg-[#050709]' : 'bg-[#0E1319]'}`}>
           {previewUnavailable ? (
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-[#050709]" role="status">
               <div
@@ -108,7 +108,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
         </div>
       </div>
 
-      <div className="w-full lg:w-[360px] shrink-0 flex flex-col justify-between gap-4 z-10">
+      <div className="w-full lg:w-[320px] shrink-0 flex flex-col justify-between gap-4 z-10 pt-2 pr-2">
         <OscilloscopeScreen waveType={app.waveType} accentColor={app.accentColor} power={mainsPower} />
 
         <div className="border-t-2 border-black/80 pt-3">
