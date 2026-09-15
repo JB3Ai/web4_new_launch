@@ -41,7 +41,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
       <BayScrew className="right-1.5 bottom-1.5" rotation={142} />
       <div className="absolute inset-[3px] border border-[#303946] pointer-events-none rounded-none" />
 
-      <div className="flex-1 flex flex-col justify-between z-10 pt-2 pl-2">
+      <div className="flex-1 flex flex-col justify-between z-10 pt-2 px-2">
         <div>
           <div className="flex items-center justify-between border-2 border-black/80 bg-[#11161D] px-3 py-2 mb-3">
             <span className="text-[11px] font-mono font-black tracking-widest text-[#E9DED0]">LAUNCH BAY // {slot}</span>
@@ -50,16 +50,18 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
             </span>
           </div>
 
-          <h2 className="text-xl font-black tracking-tight text-[#FFF8EC] mb-2 uppercase">
-            {app.title}
-          </h2>
+          <div className="px-2">
+            <h2 className="text-xl font-black tracking-tight text-[#FFF8EC] mb-2 uppercase">
+              {app.title}
+            </h2>
 
-          <div className="bg-[#151A21] border-2 border-black/70 p-3 mb-4 flex items-start gap-2 rounded-none shadow-[inset_0_0_10px_rgba(0,0,0,0.55)]">
-            <Terminal size={14} className="text-amber-300/70 mt-0.5 shrink-0" />
-            <p className="text-[12px] text-slate-300 font-mono leading-relaxed">
-              <span className="text-amber-300/70 font-bold">&gt;_ </span>
-              {app.description}
-            </p>
+            <div className="bg-[#151A21] border-2 border-black/70 p-3 mb-4 flex items-start gap-2 rounded-none shadow-[inset_0_0_10px_rgba(0,0,0,0.55)]">
+              <Terminal size={14} className="text-amber-300/70 mt-0.5 shrink-0" />
+              <p className="text-[12px] text-slate-300 font-mono leading-relaxed">
+                <span className="text-amber-300/70 font-bold">&gt;_ </span>
+                {app.description}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -88,7 +90,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
               <img
                 src={previewSource}
                 alt={app.title}
-                className="w-full h-full object-cover opacity-65 group-hover/img:opacity-90 transition-opacity duration-200 filter grayscale contrast-125 brightness-110"
+                className="w-full h-full object-cover opacity-30 group-hover/img:opacity-60 transition-opacity duration-200 filter grayscale contrast-125 mix-blend-normal"
                 onError={() => setFailedPreviewSource(previewSource)}
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-[#0A0D11]/35">
@@ -98,7 +100,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
           )}
         </div>
 
-        <div className="flex items-center gap-4 text-[10px] text-slate-400 border-t-2 border-black/70 pt-3 font-mono">
+        <div className="flex items-center gap-4 px-2 text-[10px] text-slate-400 border-t-2 border-black/70 pt-3 font-mono">
           <div>BEAM_OUTPUT: <span className="text-[#E9DED0]">100%</span></div>
           <div>SIGNAL_GAIN: <span className="text-[#E9DED0]">0.0 dB</span></div>
           <div className="ml-auto flex items-center gap-1.5">
@@ -108,7 +110,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
         </div>
       </div>
 
-      <div className="w-full lg:w-[320px] shrink-0 flex flex-col justify-between gap-4 z-10 pt-2 pr-2">
+      <div className="w-full lg:w-[320px] shrink-0 flex flex-col justify-between gap-4 z-10 pt-2 px-2">
         <OscilloscopeScreen waveType={app.waveType} accentColor={app.accentColor} power={mainsPower} />
 
         <div className="border-t-2 border-black/80 pt-3">
@@ -119,7 +121,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
             href={app.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full h-16 bg-[#D94132] border-2 border-[#641C17] text-[#FFF8EC] flex items-center justify-between px-5 font-black text-sm uppercase tracking-widest group/btn relative transition-colors duration-150 hover:bg-[#EF4444] active:translate-y-1 rounded-none shadow-[0_5px_0_#671E18,0_8px_12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.28)]"
+            className="w-full h-16 bg-[#D94132] border-2 border-[#641C17] text-[#FFF8EC] flex items-center justify-between px-5 text-xs font-black tracking-widest group/btn relative transition-colors duration-150 hover:bg-[#EF4444] active:translate-y-1 rounded-none shadow-[0_5px_0_#671E18,0_8px_12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.28)]"
           >
             <span className="flex items-center gap-3">
               <span className="w-3 h-3 border border-black/50 bg-[#FFE09A] animate-pulse rounded-none shrink-0 shadow-[0_0_4px_rgba(255,224,154,0.7)]" />

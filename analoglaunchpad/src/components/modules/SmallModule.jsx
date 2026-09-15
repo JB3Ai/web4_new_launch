@@ -81,7 +81,7 @@ export const SmallModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
             <img
               src={previewSource}
               alt={app.title}
-              className="w-full h-full object-cover opacity-65 group-hover/img:opacity-90 transition-opacity duration-200 filter grayscale contrast-125 brightness-110"
+              className="w-full h-full object-cover opacity-30 group-hover/img:opacity-60 transition-opacity duration-200 filter grayscale contrast-125 mix-blend-normal"
               onError={() => setFailedPreviewSource(previewSource)}
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-[#0A0D11]/35">
@@ -91,7 +91,7 @@ export const SmallModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
         )}
       </div>
 
-      <div className="flex-1 flex flex-col justify-between min-h-[100px]">
+      <div className="flex-1 flex flex-col justify-between min-h-[100px] px-2">
         <div>
           <h3 className="text-base font-black text-[#FFF8EC] uppercase mb-1 tracking-tight">{app.title}</h3>
           <p className="text-[11px] text-slate-300 font-mono line-clamp-2 leading-relaxed">{app.description}</p>
@@ -105,7 +105,7 @@ export const SmallModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
             href={app.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full h-16 bg-[#E09A22] border-2 border-[#7A4B08] text-[#19140B] flex items-center justify-between px-4 font-black text-xs uppercase tracking-wider group/btn relative transition-colors duration-150 hover:bg-[#F59E0B] active:translate-y-1 rounded-none shadow-[0_5px_0_#7A4B08,0_8px_12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.38)]"
+            className="w-full h-16 bg-[#E09A22] border-2 border-[#7A4B08] text-[#19140B] flex items-center justify-between px-4 text-xs font-black tracking-widest group/btn relative transition-colors duration-150 hover:bg-[#F59E0B] active:translate-y-1 rounded-none shadow-[0_5px_0_#7A4B08,0_8px_12px_rgba(255,255,255,0.38)]"
           >
             <span className="flex items-center gap-2.5">
               <span className="w-2.5 h-2.5 border border-black/50 bg-[#FFF1C2] animate-pulse rounded-none shrink-0 shadow-[0_0_4px_rgba(255,241,194,0.75)]" />
