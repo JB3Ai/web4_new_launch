@@ -40,7 +40,7 @@ export const LargeModule = ({
   const [failedPreviewSource, setFailedPreviewSource] = useState(null);
   const previewUnavailable = !previewSource || failedPreviewSource === previewSource;
   const previewObjectPosition = slot === 'BAY-01'
-    ? 'center 15%'
+    ? 'center top'
     : slot === 'BAY-04'
       ? 'center 20%'
       : 'center';
@@ -97,7 +97,7 @@ export const LargeModule = ({
           </div>
         </div>
 
-        <div className={`border-2 border-black/80 flex items-center justify-center h-32 my-4 relative rounded-none overflow-hidden group/img shadow-[inset_0_0_12px_rgba(0,0,0,0.8)] ${previewUnavailable ? 'bg-[#050709]' : 'bg-[#0E1319]'}`}>
+        <div className={`border-2 border-black/80 flex items-center justify-center h-24 my-3 relative rounded-none overflow-hidden group/img shadow-[inset_0_0_12px_rgba(0,0,0,0.8)] ${previewUnavailable ? 'bg-[#050709]' : 'bg-[#0E1319]'}`}>
           {!powerOn ? (
             <span className="text-[9px] text-slate-600 font-mono tracking-widest uppercase">// SLOT SYSTEM BUS SHUTDOWN //</span>
           ) : isPending || previewUnavailable ? (

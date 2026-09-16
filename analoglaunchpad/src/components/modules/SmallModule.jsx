@@ -83,7 +83,7 @@ export const SmallModule = ({
             isSmall
           />
 
-          <div className="border border-slate-900 bg-slate-950 p-1 h-28 my-3 relative flex items-center justify-center overflow-hidden rounded-none shadow-inner group/img">
+          <div className="border border-slate-900 bg-slate-950 p-1 h-24 my-3 relative flex items-center justify-center overflow-hidden rounded-none shadow-inner group/img">
             {!powerOn ? (
               <span className="text-[8px] text-slate-600 font-mono tracking-widest uppercase">// STANDBY MODE //</span>
             ) : isPending ? (
