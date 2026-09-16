@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { OscilloscopeScreen } from '../Shared/OscilloscopeScreen';
-import { ExternalLink, Terminal } from 'lucide-react';
+import { playKnobClick, playToggleSound } from '../../utils/audioEffects';
 
 const BayScrew = ({ className, rotation = 45 }) => (
   <svg
@@ -21,18 +21,51 @@ const BayScrew = ({ className, rotation = 45 }) => (
 );
 
 /** Full-width heavy chassis module for priority launchpad bays. */
-export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) => {
+export const LargeModule = ({
+  app,
+  slotNumber = app.slot,
+  mainsPower = true,
+  isPowerOn,
+  onPowerChange,
+}) => {
   const slot = app.slot || slotNumber;
-  const previewSource = app.imagePlaceholder && app.imagePlaceholder !== 'RENDER_PENDING'
+  const [localPowerOn, setLocalPowerOn] = useState(mainsPower);
+  const [knobValue, setKnobValue] = useState(1);
+  const isPowerControlled = typeof onPowerChange === 'function';
+  const powerOn = isPowerControlled ? Boolean(isPowerOn) : localPowerOn;
+  const isPending = app.imagePlaceholder === 'RENDER_PENDING';
+  const previewSource = !isPending && app.imagePlaceholder
     ? (app.imagePlaceholder.startsWith('/') ? app.imagePlaceholder : `/assets/previews/${app.imagePlaceholder}`)
     : null;
   const [failedPreviewSource, setFailedPreviewSource] = useState(null);
   const previewUnavailable = !previewSource || failedPreviewSource === previewSource;
+  const previewObjectPosition = slot === 'BAY-01'
+    ? 'center 15%'
+    : slot === 'BAY-04'
+      ? 'center 20%'
+      : 'center';
+
+  const togglePower = () => {
+    const nextPowerState = !powerOn;
+    playToggleSound(nextPowerState);
+
+    if (isPowerControlled) {
+      onPowerChange(nextPowerState);
+      return;
+    }
+
+    setLocalPowerOn(nextPowerState);
+  };
+
+  const adjustSignalGain = () => {
+    playKnobClick();
+    setKnobValue((value) => (value >= 3 ? 1 : value + 1));
+  };
 
   return (
     <article
       id={`module-${app.id}`}
-      className="bg-[#0A0D10] text-slate-200 border-4 border-[#1A1F26] p-6 flex flex-col lg:flex-row gap-6 relative group transition-colors duration-200 rounded-none shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_4px_20px_rgba(0,0,0,0.9)]"
+      className="bg-[#0A0D10] text-slate-200 border-4 border-[#1A1F26] p-6 flex flex-col lg:flex-row gap-6 relative group transition-colors duration-200 rounded-none shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_4px_20px_rgba(0,0,0,0.9)] select-none"
       style={{ '--accent': app.accentColor }}
     >
       <BayScrew className="top-1.5 left-1.5" rotation={18} />
@@ -41,7 +74,7 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
       <BayScrew className="right-1.5 bottom-1.5" rotation={142} />
       <div className="absolute inset-[3px] border border-[#303946] pointer-events-none rounded-none" />
 
-      <div className="flex-1 flex flex-col justify-between z-10 pt-2 px-2">
+      <div className="relative z-10 min-w-0 flex-1 flex flex-col justify-between pt-2 px-2">
         <div>
           <div className="flex items-center justify-between border-2 border-black/80 bg-[#11161D] px-3 py-2 mb-3">
             <span className="text-[11px] font-mono font-black tracking-widest text-[#E9DED0]">LAUNCH BAY // {slot}</span>
@@ -55,18 +88,19 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
               {app.title}
             </h2>
 
-            <div className="bg-[#151A21] border-2 border-black/70 p-3 mb-4 flex items-start gap-2 rounded-none shadow-[inset_0_0_10px_rgba(0,0,0,0.55)]">
-              <Terminal size={14} className="text-amber-300/70 mt-0.5 shrink-0" />
-              <p className="text-[12px] text-slate-300 font-mono leading-relaxed">
-                <span className="text-amber-300/70 font-bold">&gt;_ </span>
-                {app.description}
-              </p>
+            <div className="overflow-hidden whitespace-nowrap bg-slate-950/60 border border-slate-900/60 p-2.5 mb-4 relative rounded-none shadow-inner">
+              <span className="inline-block animate-[marquee_25s_linear_infinite] text-[12px] text-emerald-400/90 font-mono tracking-wide">
+                &gt;&gt;&gt; CHANNEL ACTIVE // DIAGNOSTIC LOG: {app.description} // LINK STABLE // INITIATE READY STATE...
+              </span>
+              <span className="absolute top-0 bottom-0 left-0 w-3 bg-gradient-to-r from-slate-950 to-transparent pointer-events-none" />
             </div>
           </div>
         </div>
 
         <div className={`border-2 border-black/80 flex items-center justify-center h-32 my-4 relative rounded-none overflow-hidden group/img shadow-[inset_0_0_12px_rgba(0,0,0,0.8)] ${previewUnavailable ? 'bg-[#050709]' : 'bg-[#0E1319]'}`}>
-          {previewUnavailable ? (
+          {!powerOn ? (
+            <span className="text-[9px] text-slate-600 font-mono tracking-widest uppercase">// SLOT SYSTEM BUS SHUTDOWN //</span>
+          ) : isPending || previewUnavailable ? (
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-[#050709]" role="status">
               <div
                 className="absolute inset-0 opacity-40"
@@ -90,47 +124,112 @@ export const LargeModule = ({ app, slotNumber = app.slot, mainsPower = true }) =
               <img
                 src={previewSource}
                 alt={app.title}
-                className="w-full h-full object-cover opacity-30 group-hover/img:opacity-60 transition-opacity duration-200 filter grayscale contrast-125 mix-blend-normal"
+                className="w-full h-full object-cover opacity-30 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500 filter grayscale contrast-125 group-hover:filter-none mix-blend-normal"
+                style={{ objectPosition: previewObjectPosition }}
                 onError={() => setFailedPreviewSource(previewSource)}
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-[#0A0D11]/35">
-                <span className="text-[10px] text-[#E9DED0] font-bold tracking-widest font-mono">// PREVIEW MONITOR: {app.slot} //</span>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-[#0A0D11]/35 group-hover:bg-[#0A0D11]/10 transition-colors duration-500">
+                <span className="text-[10px] text-[#E9DED0] font-bold tracking-widest font-mono">// PREVIEW MONITOR: {slot} //</span>
               </div>
             </>
           )}
         </div>
 
-        <div className="flex items-center gap-4 px-2 text-[10px] text-slate-400 border-t-2 border-black/70 pt-3 font-mono">
-          <div>BEAM_OUTPUT: <span className="text-[#E9DED0]">100%</span></div>
-          <div>SIGNAL_GAIN: <span className="text-[#E9DED0]">0.0 dB</span></div>
+        <div className="flex flex-wrap items-center gap-4 px-2 text-[10px] text-slate-400 border-t-2 border-black/70 pt-3 font-mono">
+          <div>BEAM_OUTPUT: <span className="text-[#E9DED0]">{powerOn ? '100%' : '0%'}</span></div>
+          <div>SIGNAL_GAIN: <span className="text-[#E9DED0]">{knobValue}.0 dB</span></div>
           <div className="ml-auto flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-[#62D878] shadow-[0_0_4px_rgba(98,216,120,0.65)]" />
-            <span className="text-[#E9DED0] font-bold">READY</span>
+            <span className={`w-1.5 h-1.5 ${powerOn ? 'bg-[#62D878] shadow-[0_0_4px_rgba(98,216,120,0.65)]' : 'bg-slate-700'}`} />
+            <span className="text-[#E9DED0] font-bold">{powerOn ? 'READY' : 'STANDBY'}</span>
           </div>
         </div>
       </div>
 
-      <div className="w-full lg:w-[320px] shrink-0 flex flex-col justify-between gap-4 z-10 pt-2 px-2">
-        <OscilloscopeScreen waveType={app.waveType} accentColor={app.accentColor} power={mainsPower} />
+      <div className="relative z-10 w-full lg:w-[330px] shrink-0 flex flex-col justify-between gap-4 pt-2 px-2">
+        <OscilloscopeScreen
+          waveType={powerOn ? app.waveType : 'flat'}
+          color={app.accentColor}
+          power={powerOn}
+          amplitude={(knobValue * 0.45) + 0.55}
+          height={160}
+        />
 
-        <div className="border-t-2 border-black/80 pt-3">
-          <p className="mb-2 text-center font-mono text-[9px] font-black tracking-[0.1em] text-[#FFE5A0]">
-            &gt;&gt;&gt; SYSTEM READY // INITIATE LAUNCH &lt;&lt;&lt;
-          </p>
+        <div className="border border-slate-900 bg-slate-950/60 p-3 flex items-center justify-between gap-3 shadow-inner">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={togglePower}
+              aria-pressed={powerOn}
+              aria-label={`${powerOn ? 'Switch off' : 'Switch on'} ${app.title}`}
+              className="w-7 h-10 bg-[#12151B] border border-slate-950 p-0.5 relative flex flex-col justify-between items-center shadow-[inset_0_2px_5px_rgba(0,0,0,0.8)] focus:outline-none focus-visible:ring-1 focus-visible:ring-red-400 rounded-none cursor-pointer"
+            >
+              <span
+                className={`w-5 h-4 transition-all duration-100 rounded-none flex items-center justify-center text-[8px] font-black text-white/50 ${
+                  powerOn
+                    ? 'bg-gradient-to-b from-red-600 to-red-500 border-red-400 translate-y-0 shadow-[0_2px_0_#991B1B]'
+                    : 'bg-gradient-to-b from-slate-700 to-slate-600 border-slate-500 translate-y-4 shadow-[0_-2px_0_#1E293B]'
+                }`}
+              >
+                {powerOn ? 'I' : 'O'}
+              </span>
+            </button>
+            <div>
+              <p className="text-[9px] font-mono font-black tracking-widest text-slate-300">POWER BUS</p>
+              <p className={`text-[8px] font-mono tracking-wider ${powerOn ? 'text-red-400' : 'text-slate-600'}`}>{powerOn ? 'CHANNEL ENERGISED' : 'CHANNEL OFFLINE'}</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={adjustSignalGain}
+            aria-label={`Set ${app.title} signal gain`}
+            className="flex items-center gap-2 text-right focus:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-none cursor-pointer"
+          >
+            <div>
+              <p className="text-[8px] text-slate-500 font-mono font-black tracking-widest">VECTOR GAIN</p>
+              <p className="text-[10px] text-emerald-300 font-mono font-black">x{knobValue}.0</p>
+            </div>
+            <span
+              className="w-9 h-9 rounded-full border-2 border-slate-950 bg-gradient-to-br from-slate-500 via-slate-700 to-slate-950 shadow-[inset_0_2px_3px_rgba(255,255,255,0.16),0_2px_4px_rgba(0,0,0,0.85)] relative transition-transform duration-150"
+              style={{ transform: `rotate(${knobValue * 45}deg)` }}
+            >
+              <span className="absolute top-1 left-1/2 h-2.5 w-px -translate-x-1/2 bg-emerald-200 shadow-[0_0_3px_rgba(110,231,183,0.9)]" />
+            </span>
+          </button>
+        </div>
+
+        <p className="text-center font-mono text-[9px] font-black tracking-[0.1em] text-[#FFE5A0]">
+          &gt;&gt;&gt; SYSTEM READY // INITIATE LAUNCH &lt;&lt;&lt;
+        </p>
+        <div className="w-full flex items-center justify-center p-4 bg-slate-950/20 border border-slate-900 border-dashed">
           <a
             href={app.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full h-16 bg-[#D94132] border-2 border-[#641C17] text-[#FFF8EC] flex items-center justify-between px-5 text-xs font-black tracking-widest group/btn relative transition-colors duration-150 hover:bg-[#EF4444] active:translate-y-1 rounded-none shadow-[0_5px_0_#671E18,0_8px_12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.28)]"
+            onClick={playKnobClick}
+            aria-disabled={!powerOn}
+            aria-label={`Launch ${app.title}`}
+            className={`w-24 h-24 rounded-full border-4 border-slate-950 bg-gradient-to-b from-slate-800 via-slate-700 to-slate-900 flex flex-col items-center justify-center relative shadow-[0_8px_16px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.2)] active:translate-y-0.5 active:shadow-md transition-all duration-150 group/btn cursor-pointer ${
+              !powerOn ? 'opacity-20 pointer-events-none' : ''
+            }`}
           >
-            <span className="flex items-center gap-3">
-              <span className="w-3 h-3 border border-black/50 bg-[#FFE09A] animate-pulse rounded-none shrink-0 shadow-[0_0_4px_rgba(255,224,154,0.7)]" />
-              <span className="tracking-widest font-mono text-xs">LAUNCH ACTIVE DEMO</span>
+            <span className="absolute inset-0.5 rounded-full border border-slate-600/40 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
+            <span
+              className="w-16 h-16 rounded-full border border-black/40 flex flex-col items-center justify-center text-[10px] font-black tracking-widest text-white transition-all duration-300 animate-[pulse_1.8s_infinite_ease-in-out]"
+              style={{
+                backgroundColor: app.accentColor,
+                boxShadow: `0 0 20px 6px ${app.accentColor}ee`,
+                textShadow: '0 1px 2px rgba(0,0,0,0.6)',
+              }}
+            >
+              <span>START</span>
+              <span>DEMO</span>
             </span>
-            <ExternalLink size={16} className="text-[#FFF8EC] transition-transform group-hover/btn:translate-x-0.5" />
           </a>
         </div>
       </div>
     </article>
   );
 };
+
+export default LargeModule;

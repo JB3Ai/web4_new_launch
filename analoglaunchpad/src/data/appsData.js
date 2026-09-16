@@ -28,18 +28,6 @@ export const appsData = [
     demoUrl: 'https://skytimetime2.vercel.app/',
   },
   {
-    id: 'neurofam',
-    slot: 'BAY-03',
-    title: 'NeuroFam Analytics',
-    description: 'Continuous predictive latency profiler and telemetry analyzer for neural compute graphs.',
-    stack: 'VERCEL HOST',
-    sector: 'FAMILY',
-    accentColor: '#F59E0B',
-    waveType: 'radar',
-    imagePlaceholder: 'RENDER_PENDING',
-    demoUrl: 'https://family-app-b.vercel.app/',
-  },
-  {
     id: 'os3-agentbuilder',
     slot: 'BAY-04',
     title: 'OS³ AgentBuilder',
@@ -72,7 +60,7 @@ export const appsData = [
     sector: 'REPORTS',
     accentColor: '#14B8A6',
     waveType: 'matrix',
-    imagePlaceholder: 'RENDER_PENDING',
+    imagePlaceholder: '/assets/BAY006_Natural%20Medicinal%20Services.jpg',
     demoUrl: 'https://workers.dev',
   },
   {
@@ -98,18 +86,6 @@ export const appsData = [
     waveType: 'sine',
     imagePlaceholder: '/assets/BAY08jbprofile.jpg',
     demoUrl: 'http://jonoblackburn.com',
-  },
-  {
-    id: 'os3-demo-area',
-    slot: 'BAY-09',
-    title: 'OS³ Demo Area',
-    description: 'Live interactive sandbox and experimental workspace virtualization matrix.',
-    stack: 'NODE.JS CORE',
-    sector: 'APPS',
-    accentColor: '#64748B',
-    waveType: 'matrix',
-    imagePlaceholder: '/assets/BAY009.jpg',
-    demoUrl: 'http://jonoblackburn.com/os',
   },
 ];
 

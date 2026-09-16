@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from 'react';
 /**
  * OscilloscopeScreen
  * 1970s Conar-style recessed Cathode Ray Tube (CRT) vector wave generator.
- * Supports: 'sine', 'lissajous', 'sawtooth', 'radar', 'matrix', and 'led'.
+ * Supports: 'sine', 'lissajous', 'sawtooth', 'radar', 'matrix', 'led', and 'flat'.
  * Features:
  * - Recessed dark chassis with intense inner bevels and shadows
  * - Reticle graticule etched grid with center crosshair graduation ticks
@@ -115,6 +115,7 @@ export const OscilloscopeScreen = ({
     const gridColumns = isSmall ? 8 : 12;
     const twoPi = Math.PI * 2;
     const radarMaxRadius = Math.min(cx, cy) * 0.88;
+    const isFlatline = !power || waveType === 'flat';
     const radarBlips = [
       [0.52, 1.25],
       [0.78, 3.75],
@@ -131,67 +132,78 @@ export const OscilloscopeScreen = ({
     if (!staticCtx) return;
     staticCtx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
-    staticCtx.fillStyle = power ? '#090D0B' : '#121413';
+    staticCtx.fillStyle = isFlatline ? '#07090C' : '#090D0B';
     staticCtx.fillRect(0, 0, w, h);
 
-    if (power) {
+    if (!isFlatline) {
       const radialGlow = staticCtx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(w, h) * 0.75);
       radialGlow.addColorStop(0, `${beamColor}1C`);
       radialGlow.addColorStop(1, 'transparent');
       staticCtx.fillStyle = radialGlow;
       staticCtx.fillRect(0, 0, w, h);
-
-      if (showGraticule) {
-        staticCtx.lineWidth = 1;
-        staticCtx.strokeStyle = 'rgba(255, 255, 255, 0.065)';
-        staticCtx.beginPath();
-        for (let i = 0; i <= gridColumns; i++) {
-          const x = Math.round((w / gridColumns) * i) + 0.5;
-          staticCtx.moveTo(x, 0);
-          staticCtx.lineTo(x, h);
-        }
-        for (let i = 0; i <= 6; i++) {
-          const y = Math.round((h / 6) * i) + 0.5;
-          staticCtx.moveTo(0, y);
-          staticCtx.lineTo(w, y);
-        }
-        staticCtx.stroke();
-
-        staticCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-        staticCtx.beginPath();
-        for (let i = 0; i <= 32; i++) {
-          const x = (w / 32) * i;
-          staticCtx.moveTo(x, Math.round(cy) - 2.5);
-          staticCtx.lineTo(x, Math.round(cy) + 2.5);
-        }
-        for (let i = 0; i <= 24; i++) {
-          const y = (h / 24) * i;
-          staticCtx.moveTo(Math.round(cx) - 2.5, y);
-          staticCtx.lineTo(Math.round(cx) + 2.5, y);
-        }
-        staticCtx.stroke();
-      }
-
-      if (waveType === 'radar' || waveType === 'vctradar') {
-        staticCtx.lineWidth = 1;
-        staticCtx.strokeStyle = `${beamColor}40`;
-        staticCtx.beginPath();
-        for (const radiusFraction of [0.33, 0.66, 1]) {
-          staticCtx.moveTo(cx + radarMaxRadius * radiusFraction, cy);
-          staticCtx.arc(cx, cy, radarMaxRadius * radiusFraction, 0, twoPi);
-        }
-        staticCtx.stroke();
-      }
-    } else {
-      staticCtx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-      staticCtx.font = '10px "Share Tech Mono", monospace';
-      staticCtx.textAlign = 'center';
-      staticCtx.textBaseline = 'middle';
-      staticCtx.fillText('NO BEAM / STANDBY', cx, cy);
     }
 
-    if (!power || !isAnimationActive) {
+    if (showGraticule) {
+      // A low-contrast calibration grid keeps overlays legible on the CRT.
+      staticCtx.lineWidth = 1;
+      staticCtx.strokeStyle = 'rgba(30, 41, 59, 0.2)';
+      staticCtx.beginPath();
+      for (let i = 0; i <= gridColumns; i++) {
+        const x = Math.round((w / gridColumns) * i) + 0.5;
+        staticCtx.moveTo(x, 0);
+        staticCtx.lineTo(x, h);
+      }
+      for (let i = 0; i <= 6; i++) {
+        const y = Math.round((h / 6) * i) + 0.5;
+        staticCtx.moveTo(0, y);
+        staticCtx.lineTo(w, y);
+      }
+      staticCtx.stroke();
+
+      staticCtx.strokeStyle = 'rgba(51, 65, 85, 0.35)';
+      staticCtx.beginPath();
+      staticCtx.moveTo(0, Math.round(cy) + 0.5);
+      staticCtx.lineTo(w, Math.round(cy) + 0.5);
+      staticCtx.moveTo(Math.round(cx) + 0.5, 0);
+      staticCtx.lineTo(Math.round(cx) + 0.5, h);
+      for (let i = 0; i <= 32; i++) {
+        const x = (w / 32) * i;
+        staticCtx.moveTo(x, Math.round(cy) - 2.5);
+        staticCtx.lineTo(x, Math.round(cy) + 2.5);
+      }
+      for (let i = 0; i <= 24; i++) {
+        const y = (h / 24) * i;
+        staticCtx.moveTo(Math.round(cx) - 2.5, y);
+        staticCtx.lineTo(Math.round(cx) + 2.5, y);
+      }
+      staticCtx.stroke();
+    }
+
+    if (!isFlatline && (waveType === 'radar' || waveType === 'vctradar')) {
+      staticCtx.lineWidth = 1;
+      staticCtx.strokeStyle = `${beamColor}40`;
+      staticCtx.beginPath();
+      for (const radiusFraction of [0.33, 0.66, 1]) {
+        staticCtx.moveTo(cx + radarMaxRadius * radiusFraction, cy);
+        staticCtx.arc(cx, cy, radarMaxRadius * radiusFraction, 0, twoPi);
+      }
+      staticCtx.stroke();
+    }
+
+    if (isFlatline || !isAnimationActive) {
       ctx.drawImage(staticLayer, 0, 0, w, h);
+      if (isFlatline) {
+        ctx.save();
+        ctx.strokeStyle = '#62D878';
+        ctx.shadowColor = '#62D878';
+        ctx.shadowBlur = 4;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(w, cy);
+        ctx.stroke();
+        ctx.restore();
+      }
       return;
     }
 
@@ -503,3 +515,5 @@ export const OscilloscopeScreen = ({
     </div>
   );
 };
+
+export default OscilloscopeScreen;
