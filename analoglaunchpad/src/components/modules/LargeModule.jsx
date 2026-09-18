@@ -65,7 +65,7 @@ export const LargeModule = ({
   return (
     <article
       id={`module-${app.id}`}
-      className="bg-[#0A0D10] text-slate-200 border-4 border-[#1A1F26] p-6 flex flex-col lg:flex-row gap-6 relative group transition-colors duration-200 rounded-none shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_4px_20px_rgba(0,0,0,0.9)] select-none"
+      className="bg-[#0A0D10] text-slate-200 border-4 border-[#1A1F26] p-6 flex flex-col lg:flex-row gap-6 relative group transition-all duration-200 rounded-none shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_4px_20px_rgba(0,0,0,0.9)] select-none active:scale-[0.99] active:border-slate-700/40 md:active:scale-100"
       style={{ '--accent': app.accentColor }}
     >
       <BayScrew className="top-1.5 left-1.5" rotation={18} />
@@ -124,11 +124,11 @@ export const LargeModule = ({
               <img
                 src={previewSource}
                 alt={app.title}
-                className="w-full h-full object-cover opacity-30 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500 filter grayscale contrast-125 group-hover:filter-none mix-blend-normal"
+                className="w-full h-full object-cover opacity-30 max-md:opacity-80 transition-all duration-500 filter grayscale contrast-125 brightness-75 max-md:filter-none max-md:brightness-90 md:group-hover:opacity-100 md:group-hover:scale-[1.02] md:group-hover:filter-none md:group-hover:brightness-100 mix-blend-normal"
                 style={{ objectPosition: previewObjectPosition }}
                 onError={() => setFailedPreviewSource(previewSource)}
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-[#0A0D11]/35 group-hover:bg-[#0A0D11]/10 transition-colors duration-500">
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-[#0A0D11]/35 md:group-hover:bg-[#0A0D11]/10 transition-colors duration-500">
                 <span className="text-[10px] text-[#E9DED0] font-bold tracking-widest font-mono">// PREVIEW MONITOR: {slot} //</span>
               </div>
             </>
@@ -209,7 +209,7 @@ export const LargeModule = ({
             onClick={app.demoUrl ? playKnobClick : undefined}
             aria-disabled={!powerOn || !app.demoUrl}
             aria-label={app.demoUrl ? `Launch ${app.title}` : `${app.title} is a local workspace`}
-            className={`w-24 h-24 rounded-full border-4 border-slate-950 bg-gradient-to-b from-slate-800 via-slate-700 to-slate-900 flex flex-col items-center justify-center relative shadow-[0_8px_16px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.2)] active:translate-y-0.5 active:shadow-md transition-all duration-150 group/btn cursor-pointer ${
+            className={`w-24 h-24 rounded-full border-4 border-slate-950 bg-gradient-to-b from-slate-800 via-slate-700 to-slate-900 flex flex-col items-center justify-center relative shadow-[0_8px_16px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.2)] active:translate-y-0.5 active:scale-95 active:shadow-md transition-all duration-150 group/btn cursor-pointer ${
               !powerOn || !app.demoUrl ? 'opacity-20 pointer-events-none' : ''
             }`}
           >

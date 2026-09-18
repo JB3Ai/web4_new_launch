@@ -54,7 +54,7 @@ export const SmallModule = ({
   return (
     <article
       id={`module-${app.id}`}
-      className="bg-[#0A0D10] text-slate-200 border-4 border-[#1A1F26] p-5 flex flex-col gap-4 relative group transition-colors duration-200 rounded-none h-full justify-between select-none shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_4px_20px_rgba(0,0,0,0.9)]"
+      className="bg-[#0A0D10] text-slate-200 border-4 border-[#1A1F26] p-5 flex flex-col gap-4 relative group transition-all duration-200 rounded-none h-full justify-between select-none shadow-[0_15px_30px_rgba(0,0,0,0.5),inset_0_4px_20px_rgba(0,0,0,0.9)] active:scale-[0.99] active:border-slate-700/40 md:active:scale-100"
       style={{ '--accent': app.accentColor }}
     >
       <BayScrew className="top-1.5 left-1.5" rotation={18} />
@@ -62,7 +62,7 @@ export const SmallModule = ({
       <BayScrew className="bottom-1.5 left-1.5" rotation={72} />
       <BayScrew className="right-1.5 bottom-1.5" rotation={142} />
       <div className="absolute inset-[3px] border border-[#303946] pointer-events-none rounded-none" />
-      <div className="absolute inset-0 border border-transparent group-hover:border-slate-700/30 transition-all duration-300 pointer-events-none rounded-none" />
+      <div className="absolute inset-0 border border-transparent md:group-hover:border-slate-700/30 transition-all duration-300 pointer-events-none rounded-none" />
 
       <div className="relative z-10">
         <div className="flex items-center justify-between border-2 border-black/80 bg-[#11161D] px-3 py-2 mb-3">
@@ -94,7 +94,7 @@ export const SmallModule = ({
               <img
                 src={previewSource}
                 alt={app.title}
-                className="w-full h-full object-cover transition-all duration-500 transform group-hover:scale-105 opacity-25 filter grayscale contrast-125 brightness-75 group-hover:opacity-100 group-hover:filter-none group-hover:brightness-100 mix-blend-normal rounded-none"
+                className="w-full h-full object-cover transition-all duration-500 transform md:group-hover:scale-105 opacity-25 max-md:opacity-80 filter grayscale contrast-125 brightness-75 md:group-hover:opacity-100 md:group-hover:filter-none md:group-hover:brightness-100 max-md:filter-none max-md:brightness-90 mix-blend-normal rounded-none"
                 onError={() => setFailedPreviewSource(previewSource)}
               />
             )}
@@ -141,7 +141,7 @@ export const SmallModule = ({
           onClick={app.demoUrl ? playKnobClick : undefined}
           aria-disabled={!powerOn || !app.demoUrl}
           aria-label={app.demoUrl ? `Launch ${app.title}` : `${app.title} is a local workspace`}
-          className={`w-12 h-12 rounded-full border-2 border-slate-950 bg-gradient-to-b from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center relative shadow-md active:translate-y-0.5 transition-all duration-150 group/btn cursor-pointer ${
+          className={`w-12 h-12 rounded-full border-2 border-slate-950 bg-gradient-to-b from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center relative shadow-md active:translate-y-0.5 active:scale-95 transition-all duration-150 group/btn cursor-pointer ${
             !powerOn || !app.demoUrl ? 'opacity-20 pointer-events-none' : ''
           }`}
         >
