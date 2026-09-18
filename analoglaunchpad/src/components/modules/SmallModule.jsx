@@ -138,11 +138,11 @@ export const SmallModule = ({
           href={app.demoUrl}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={playKnobClick}
-          aria-disabled={!powerOn}
-          aria-label={`Launch ${app.title}`}
+          onClick={app.demoUrl ? playKnobClick : undefined}
+          aria-disabled={!powerOn || !app.demoUrl}
+          aria-label={app.demoUrl ? `Launch ${app.title}` : `${app.title} is a local workspace`}
           className={`w-12 h-12 rounded-full border-2 border-slate-950 bg-gradient-to-b from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center relative shadow-md active:translate-y-0.5 transition-all duration-150 group/btn cursor-pointer ${
-            !powerOn ? 'opacity-20 pointer-events-none' : ''
+            !powerOn || !app.demoUrl ? 'opacity-20 pointer-events-none' : ''
           }`}
         >
           <span className="absolute inset-0.5 rounded-full border border-slate-600/30 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
@@ -154,7 +154,7 @@ export const SmallModule = ({
               textShadow: '0 1px 1px rgba(0,0,0,0.6)',
             }}
           >
-            RUN
+            {app.demoUrl ? 'RUN' : 'LOCAL'}
           </span>
         </a>
       </div>

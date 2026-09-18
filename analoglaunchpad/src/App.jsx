@@ -169,9 +169,71 @@ export default function App() {
           })}
         </main>
 
-        <footer className="mt-8 border-t-2 border-[#1E222A] pt-4 flex flex-wrap gap-2 justify-between text-[11px] font-black tracking-wider text-[#1E222A]/70">
-          <span>// STATION DECK ALPHA // HARDWARE SYSTEM COHESIVE</span>
-          <span>MASTER SECURITY HANDSHAKE MODULE // ACTIVE STATUS</span>
+        <footer className="mt-10 border-2 border-[#1E222A] bg-[#12161C] text-slate-300 shadow-[inset_0_3px_14px_rgba(0,0,0,0.7)]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 p-6 sm:p-8">
+            <section className="lg:col-span-2 px-2">
+              <p className="text-xs font-black tracking-[0.2em] text-[#E9DED0]">JB³</p>
+              <h2 className="mt-2 text-sm font-black tracking-widest text-white uppercase">Jonathan Blackburn</h2>
+              <p className="mt-3 max-w-md text-[11px] leading-relaxed text-slate-400">
+                South African entrepreneur and systems builder. Turning operational complexity into structure, clarity, and practical AI for good.
+              </p>
+              <p className="mt-4 text-[10px] font-black tracking-widest text-emerald-400">SOUTH AFRICA · GLOBAL</p>
+              <span className="mt-4 inline-flex border border-[#46505E] bg-[#1E252F] px-3 py-2 text-[10px] font-black tracking-widest text-[#E9DED0]">
+                VISIT JB³AI COMPANY
+              </span>
+            </section>
+
+            <section aria-labelledby="products-heading" className="px-2">
+              <h2 id="products-heading" className="text-[10px] font-black tracking-widest text-[#E9DED0] uppercase">Products</h2>
+              <ul className="mt-4 space-y-2 text-[11px] leading-relaxed text-slate-400">
+                <li>DukeBox of London</li>
+                <li>Isikulo AI</li>
+                <li>ClipboardAI</li>
+                <li>VoiceGrid AI</li>
+                <li>SuperAgents</li>
+                <li>InvestigatorAi</li>
+                <li>NewsroomAi</li>
+                <li>ViewGrid</li>
+              </ul>
+            </section>
+
+            <section aria-labelledby="content-heading" className="px-2">
+              <h2 id="content-heading" className="text-[10px] font-black tracking-widest text-[#E9DED0] uppercase">Content</h2>
+              <ul className="mt-4 space-y-2 text-[11px] leading-relaxed text-slate-400">
+                <li>Founder Story</li>
+                <li>GTR³ Book</li>
+                <li>Evidence</li>
+                <li>Timeline</li>
+                <li>Insights</li>
+              </ul>
+            </section>
+
+            <section aria-labelledby="support-heading" className="px-2">
+              <h2 id="support-heading" className="text-[10px] font-black tracking-widest text-[#E9DED0] uppercase">Support</h2>
+              <ul className="mt-4 space-y-2 text-[11px] leading-relaxed text-slate-400">
+                <li>Buy Me a Coffee</li>
+                <li>PayBru (SA)</li>
+                <li>PayPal</li>
+                <li>Ko-fi</li>
+                <li>OS³ Portal</li>
+                <li>JB³Ai Company</li>
+              </ul>
+            </section>
+
+            <section aria-labelledby="connect-heading" className="px-2">
+              <h2 id="connect-heading" className="text-[10px] font-black tracking-widest text-[#E9DED0] uppercase">Connect</h2>
+              <ul className="mt-4 space-y-2 text-[11px] leading-relaxed text-slate-400 break-all">
+                <li><a className="hover:text-emerald-300 transition-colors" href="mailto:hi@jb3ai.com">hi@jb3ai.com</a></li>
+                <li><a className="hover:text-emerald-300 transition-colors" href="mailto:jono@jb3ai.com">jono@jb3ai.com</a></li>
+                <li><a className="hover:text-emerald-300 transition-colors" href="mailto:jono@jonoblackburn.com">jono@jonoblackburn.com</a></li>
+              </ul>
+            </section>
+          </div>
+
+          <div className="border-t border-slate-800 px-6 sm:px-8 py-3 flex flex-wrap gap-2 justify-between text-[9px] font-black tracking-widest text-slate-500">
+            <span>// JB³AI COMPANY // SYSTEMS FOR PRACTICAL AI</span>
+            <span>MASTER CONSOLE // SOUTH AFRICA · GLOBAL</span>
+          </div>
         </footer>
       </div>
     </div>

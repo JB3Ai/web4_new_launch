@@ -73,7 +73,7 @@ export const appsData = [
     accentColor: '#14B8A6',
     waveType: 'matrix',
     imagePlaceholder: '/assets/BAY006_Natural%20Medicinal%20Services.jpg',
-    demoUrl: 'https://workers.dev',
+    demoUrl: 'https://nms-cloud.jono-18a.workers.dev/',
   },
   {
     id: 'jb3-command-centre',
@@ -90,7 +90,7 @@ export const appsData = [
   {
     id: 'founder-portfolio',
     slot: 'BAY-08',
-    title: 'Founder : Jono Blackburn',
+    title: 'Founder : Jono Blackburn Portfolio and Profile Page',
     description: 'Systems architect personal engineering showcase tracking operational data and cross-industry builds.',
     stack: 'STATIC SITE',
     sector: 'WEB',
@@ -98,6 +98,18 @@ export const appsData = [
     waveType: 'sine',
     imagePlaceholder: '/assets/BAY08jbprofile.jpg',
     demoUrl: 'http://jonoblackburn.com',
+  },
+  {
+    id: 'career-pulse-ai',
+    slot: 'BAY-10',
+    title: 'JB³ Career Pulse-Ai',
+    description: 'Local-first AI job-search command centre for pipeline tracking, role evaluation, CV generation, and portal scanning.',
+    stack: 'NEXT.JS / NODE.JS',
+    sector: 'APPS',
+    accentColor: '#8B5CF6',
+    waveType: 'lissajous',
+    imagePlaceholder: 'RENDER_PENDING',
+    demoUrl: null,
   },
 ];
 

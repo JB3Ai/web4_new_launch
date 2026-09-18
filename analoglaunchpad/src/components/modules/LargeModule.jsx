@@ -97,7 +97,7 @@ export const LargeModule = ({
           </div>
         </div>
 
-        <div className={`border-2 border-black/80 flex items-center justify-center h-24 my-3 relative rounded-none overflow-hidden group/img shadow-[inset_0_0_12px_rgba(0,0,0,0.8)] ${previewUnavailable ? 'bg-[#050709]' : 'bg-[#0E1319]'}`}>
+        <div className={`border-2 border-black/80 flex items-center justify-center h-28 my-3 relative rounded-none overflow-hidden group/img shadow-[inset_0_0_12px_rgba(0,0,0,0.8)] ${previewUnavailable ? 'bg-[#050709]' : 'bg-[#0E1319]'}`}>
           {!powerOn ? (
             <span className="text-[9px] text-slate-600 font-mono tracking-widest uppercase">// SLOT SYSTEM BUS SHUTDOWN //</span>
           ) : isPending || previewUnavailable ? (
@@ -206,11 +206,11 @@ export const LargeModule = ({
             href={app.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={playKnobClick}
-            aria-disabled={!powerOn}
-            aria-label={`Launch ${app.title}`}
+            onClick={app.demoUrl ? playKnobClick : undefined}
+            aria-disabled={!powerOn || !app.demoUrl}
+            aria-label={app.demoUrl ? `Launch ${app.title}` : `${app.title} is a local workspace`}
             className={`w-24 h-24 rounded-full border-4 border-slate-950 bg-gradient-to-b from-slate-800 via-slate-700 to-slate-900 flex flex-col items-center justify-center relative shadow-[0_8px_16px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.2)] active:translate-y-0.5 active:shadow-md transition-all duration-150 group/btn cursor-pointer ${
-              !powerOn ? 'opacity-20 pointer-events-none' : ''
+              !powerOn || !app.demoUrl ? 'opacity-20 pointer-events-none' : ''
             }`}
           >
             <span className="absolute inset-0.5 rounded-full border border-slate-600/40 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
@@ -222,8 +222,8 @@ export const LargeModule = ({
                 textShadow: '0 1px 2px rgba(0,0,0,0.6)',
               }}
             >
-              <span>START</span>
-              <span>DEMO</span>
+              <span>{app.demoUrl ? 'START' : 'LOCAL'}</span>
+              <span>{app.demoUrl ? 'DEMO' : 'ONLY'}</span>
             </span>
           </a>
         </div>
